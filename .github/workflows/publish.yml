@@ -2,8 +2,8 @@ name: Publish Python Package
 
 on:
   push:
-    tags:
-      - "v*" # This triggers on version tags like v1.0, v2.1, etc.
+    branches:
+      - main
 
 jobs:
   publish:
