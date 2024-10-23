@@ -2,7 +2,7 @@
 
 **LogMagix** is a custom Python logging package that provides colorful and styled log messages for success, warnings, failures, and more. It also includes a loader class for displaying animated loading sequences in the terminal.
 
-## Features
+## 🔥 Features
 
 - Log messages with success, warning, failure, and informational levels.
 - Customize log message colors using ANSI color codes.
@@ -10,7 +10,7 @@
 - Animated loading spinner for long-running operations.
 - Flexible message format and easy-to-use API.
 
-## Installation
+## ⚙️ Installation
 
 To install the package locally, clone the repository and run:
 
@@ -24,7 +24,7 @@ Alternatively, once published, you can install it via `pip` from PyPI:
 pip install logmagix
 ```
 
-## Usage
+## 🔧 Usage
 
 ### Import the Package
 
@@ -77,7 +77,7 @@ log = Logger(prefix=".myapp/logs")
 log.success("Custom prefix message")
 ```
 
-## Example
+## 🔎 Example
 
 Here’s a full example demonstrating both logging and loader:
 
@@ -101,7 +101,7 @@ with loader:
 log.success("Task completed!")
 ```
 
-## Requirements
+## ❗ Requirements
 
 LogMagix requires the following Python package:
 
@@ -113,15 +113,15 @@ Install `colorama` if it’s not already installed:
 pip install colorama
 ```
 
-## License
+## ©️ License
 
 LogMagix is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
 
-## Contributing
+## 🖥️ Contributing
 
 Contributions are welcome! If you would like to contribute to the project, feel free to fork the repository and submit a pull request.
 
-## Author
+## 👤 Author
 
 LogMagix is developed and maintained by **sexfrance**.
 
