@@ -10,7 +10,7 @@ setup(
     description="A custom logger package",   
     long_description=open("README.md").read(),   
     long_description_content_type="text/markdown",
-    url="https://github.com/sexfrance/logmagix",  
+    url="https://github.com/sexfrance/LogMagix",  
     classifiers=[                          
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
