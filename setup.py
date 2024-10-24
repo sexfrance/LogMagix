@@ -2,13 +2,13 @@ from setuptools import setup, find_packages
 
 setup(
     name="logmagix",                   
-    version="0.1.2",                           
+    version="0.2.10",                           
     packages=find_packages(),               
     install_requires=["colorama"],           
     author="Sexfrance",                     
     author_email="bwuuuuu@gmail.com",   
     description="A custom logger package",   
-    long_description=open("README.md").read(),   
+    long_description=open("README.md", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
     url="https://github.com/sexfrance/LogMagix",  
     classifiers=[                          

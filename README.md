@@ -1,14 +1,15 @@
 # LogMagix
 
-**LogMagix** is a custom Python logging package that provides colorful and styled log messages for success, warnings, failures, and more. It also includes a loader class for displaying animated loading sequences in the terminal.
+**LogMagix** is a custom Python logging package that offers styled, colorful log messages for various logging levels such as success, warning, failure, and more. It also features an animated loader class for providing a visual indicator during long-running operations in the terminal.
 
 ## 🔥 Features
 
-- Log messages with success, warning, failure, and informational levels.
-- Customize log message colors using ANSI color codes.
-- Time-stamped log messages for tracking events.
-- Animated loading spinner for long-running operations.
-- Flexible message format and easy-to-use API.
+- Log messages for success, warning, failure, and informational levels.
+- Customize message colors using ANSI escape sequences.
+- Time-stamped log messages for better tracking.
+- Built-in animated loader for visually appealing loading spinners.
+- Customizable log and loader prefixes.
+- Simple and flexible API with multiple ways to use the `Loader` class.
 
 ## ⚙️ Installation
 
@@ -18,7 +19,7 @@ To install the package locally, clone the repository and run:
 pip install .
 ```
 
-Alternatively, once published, you can install it via `pip` from PyPI:
+You can also install it via `pip` from PyPI:
 
 ```bash
 pip install logmagix
@@ -26,15 +27,15 @@ pip install logmagix
 
 ## 🔧 Usage
 
-### Import the Package
+### Importing the Package
 
 ```python
 from logmagix import Logger, Loader
 ```
 
-### Basic Logging
+### Logging
 
-Create an instance of the `Logger` class and log messages with different levels:
+Initialize the `Logger` class to log messages with different levels:
 
 ```python
 log = Logger()
@@ -48,66 +49,90 @@ log.failure("Something went wrong!")
 # Warning message
 log.warning("This is a warning!")
 
-# Information message
+# Informational message
 log.info("Informational log message")
 
 # Debug message
 log.debug("Debugging log message")
+
+# Question input
+log.question("This is an input question!")
 ```
 
 ### Loading Animation
 
-Use the `Loader` class to display an animated loading spinner during long-running operations:
+The `Loader` class can be used in two ways:
 
+#### Using a context manager:
 ```python
-from logmagix import Loader
-import time
+from time import sleep
 
-loader = Loader(desc="Connecting to server...")
-with loader:
-    time.sleep(5)  # Simulate a task that takes 5 seconds
+with Loader(desc="Loading with context manager..."):
+    for i in range(10):
+        sleep(0.25)
 ```
 
-### Customizing Log Prefix
+#### Using `start()` and `stop()` methods:
 
-You can customize the prefix used in log messages by passing it as a parameter to the `Logger`:
+```python
+loader = Loader(desc="Loading with object...", end="That was fast!", timeout=0.05).start()
+for i in range(10):
+    sleep(0.25)
+loader.stop()
+```
 
+### Custom Log and Loader Prefix
+
+Both the `Logger` and `Loader` classes allow for customizing the prefix that is shown before each message:
+
+#### Logger Prefix:
 ```python
 log = Logger(prefix=".myapp/logs")
-log.success("Custom prefix message")
+log.success("This message has a custom log prefix!")
 ```
 
-## 🔎 Example
+#### Loader Prefix:
+```python
+loader = Loader(prefix=".myapp/loader", desc="Loading with a custom loader prefix...")
+loader.start()
+time.sleep(5)  # Simulate a task
+loader.stop()
+```
 
-Here’s a full example demonstrating both logging and loader:
+### Full Example
+
+Here’s an example showing both logging and loader functionality:
 
 ```python
 from logmagix import Logger, Loader
 import time
 
-# Initialize the logger
-log = Logger()
+log = Logger(prefix="custom/log/prefix")
 
-# Log different types of messages
+# Log messages
 log.success("Everything is running smoothly!")
-log.warning("This is a warning message.")
-log.failure("Critical failure detected!")
+log.warning("Watch out, something might happen!")
+log.failure("Critical error occurred!")
 
-# Use a loader for a long-running task
-loader = Loader(desc="Processing data...")
-with loader:
-    time.sleep(5)  # Simulate a task that takes 5 seconds
+# Use loader with custom prefix and context manager
+with Loader(prefix="custom/loader/prefix", desc="Processing data..."):
+    time.sleep(5)  # Simulate task
 
-log.success("Task completed!")
+# Use loader with custom prefix and start/stop methods
+loader = Loader(prefix="custom/loader/prefix", desc="Saving files...", end="Done!", timeout=0.05).start()
+time.sleep(5)  # Simulate task
+loader.stop()
+
+log.success("Processing completed!")
 ```
 
 ## ❗ Requirements
 
-LogMagix requires the following Python package:
+LogMagix requires:
 
 - `colorama` for cross-platform color support in the terminal.
 
-Install `colorama` if it’s not already installed:
+To install `colorama`, run:
 
 ```bash
 pip install colorama
@@ -119,7 +144,7 @@ LogMagix is licensed under the MIT License. See the [LICENSE](LICENSE) file for 
 
 ## 🖥️ Contributing
 
-Contributions are welcome! If you would like to contribute to the project, feel free to fork the repository and submit a pull request.
+Contributions are welcome! Feel free to fork the repository, make changes, and submit a pull request.
 
 ## 👤 Author
 
@@ -127,4 +152,6 @@ LogMagix is developed and maintained by **sexfrance**.
 
 ---
 
-Enjoy using **LogMagix** to bring color and style to your Python logging!
+Enjoy bringing more color and animation to your Python logging with **LogMagix**!
+
+
