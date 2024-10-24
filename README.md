@@ -1,6 +1,6 @@
 # LogMagix
 
-**LogMagix** is a custom Python logging package that offers styled, colorful log messages for various logging levels such as success, warning, failure, and more. It also features an animated loader class for providing a visual indicator during long-running operations in the terminal.
+**LogMagix** is a custom Python logging package that offers styled, colorful log messages for various logging levels such as success, warning, failure, and more. It also features an animated loader class for providing a visual indicator during long-running operations in the terminal. Additionally, the new `Home` class offers customizable ASCII art displays for greeting users with special messages, branding, or system information.
 
 ## 🔥 Features
 
@@ -9,7 +9,9 @@
 - Time-stamped log messages for better tracking.
 - Built-in animated loader for visually appealing loading spinners.
 - Customizable log and loader prefixes.
+- ASCII art display for personalized greetings, system info, and branding.
 - Simple and flexible API with multiple ways to use the `Loader` class.
+- Customizable text alignment for the `Home` ASCII art display.
 
 ## ⚙️ Installation
 
@@ -30,7 +32,7 @@ pip install logmagix
 ### Importing the Package
 
 ```python
-from logmagix import Logger, Loader
+from logmagix import Logger, Loader, Home
 ```
 
 ### Logging
@@ -64,6 +66,7 @@ log.question("This is an input question!")
 The `Loader` class can be used in two ways:
 
 #### Using a context manager:
+
 ```python
 from time import sleep
 
@@ -86,12 +89,14 @@ loader.stop()
 Both the `Logger` and `Loader` classes allow for customizing the prefix that is shown before each message:
 
 #### Logger Prefix:
+
 ```python
 log = Logger(prefix=".myapp/logs")
 log.success("This message has a custom log prefix!")
 ```
 
 #### Loader Prefix:
+
 ```python
 loader = Loader(prefix=".myapp/loader", desc="Loading with a custom loader prefix...")
 loader.start()
@@ -99,12 +104,32 @@ time.sleep(5)  # Simulate a task
 loader.stop()
 ```
 
-### Full Example
+### ASCII Art and Greeting (New `Home` Class)
 
-Here’s an example showing both logging and loader functionality:
+The `Home` class lets you display customized ASCII art text along with system information, such as a welcome message, username, or credits.
+
+#### Using the `Home` Class:
 
 ```python
-from logmagix import Logger, Loader
+home_screen = Home(
+    text="LogMagix",
+    align="center",
+    adinfo1="discord.cyberious.xyz",
+    adinfo2="v1.0",
+    credits="Developed by sexfrance"
+)
+
+home_screen.display()
+```
+
+This will display the ASCII art version of "LogMagix" in the center of the terminal, along with optional `adinfo1` and `adinfo2` texts at the bottom. The terminal width is automatically detected to align the text properly.
+
+### Full Example
+
+Here’s an example showing both logging, loader, and the new `Home` class functionality:
+
+```python
+from logmagix import Logger, Loader, Home
 import time
 
 log = Logger(prefix="custom/log/prefix")
@@ -123,19 +148,38 @@ loader = Loader(prefix="custom/loader/prefix", desc="Saving files...", end="Done
 time.sleep(5)  # Simulate task
 loader.stop()
 
+# Display Home screen with ASCII art and welcome message
+home_screen = Home(
+    text="LogMagix",
+    align="center",
+    adinfo1="discord.cyberious.xyz",
+    adinfo2="v1.0",
+    credits="Developed by sexfrance"
+)
+
+home_screen.display()
+
 log.success("Processing completed!")
 ```
+
+### Customization in `Home` Class
+
+- **text**: The text to be displayed in ASCII art.
+- **align**: Align the ASCII art text to "left", "center", or "right" in the terminal.
+- **adinfo1** and **adinfo2**: Additional information displayed below the ASCII art.
+- **credits**: Optional credits or user information.
 
 ## ❗ Requirements
 
 LogMagix requires:
 
 - `colorama` for cross-platform color support in the terminal.
+- `pystyle` for creating the colored text effects.
 
-To install `colorama`, run:
+To install dependencies, run:
 
 ```bash
-pip install colorama
+pip install colorama pystyle
 ```
 
 ## ©️ License
@@ -149,9 +193,3 @@ Contributions are welcome! Feel free to fork the repository, make changes, and s
 ## 👤 Author
 
 LogMagix is developed and maintained by **sexfrance**.
-
----
-
-Enjoy bringing more color and animation to your Python logging with **LogMagix**!
-
-
