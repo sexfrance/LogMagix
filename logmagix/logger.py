@@ -104,12 +104,13 @@ class Loader:
             print(self.end, flush=True)
 
 class Home:
-    def __init__(self, text, align="left", adinfo1=None, adinfo2=None, credits=None):
+    def __init__(self, text, align="left", adinfo1=None, adinfo2=None, credits=None, clear=True):
         self.text = text
         self.align = align
         self.adinfo1 = adinfo1
         self.adinfo2 = adinfo2
         self.credits = credits
+        self.clear = clear
         self.username = getpass.getuser()
 
     def _get_char_art(self):
@@ -141,6 +142,9 @@ class Home:
             aligned_result.append(aligned_line)
         return aligned_result
 
+    def _clear(self):
+        os.system('cls' if os.name == 'nt' else 'clear')
+
     def display(self):
         char_arts, max_height = self._get_char_art()
         result = [""] * max_height
@@ -155,8 +159,11 @@ class Home:
             terminal_width = os.get_terminal_size().columns
         except OSError:
             terminal_width = 80
-
+        
         aligned_result = self._align_text(result, terminal_width, self.align, max_line_width)
+        if self.clear:
+            self._clear()
+
         for line in aligned_result:
             Write.Print(line + "\n", Colors.red_to_blue, interval=0.000)
 

@@ -116,7 +116,8 @@ home_screen = Home(
     align="center",
     adinfo1="discord.cyberious.xyz",
     adinfo2="v1.0",
-    credits="Developed by sexfrance"
+    credits="Developed by sexfrance",
+    clear = False, # To clear the console, default is True
 )
 
 home_screen.display()
@@ -154,7 +155,8 @@ home_screen = Home(
     align="center",
     adinfo1="discord.cyberious.xyz",
     adinfo2="v1.0",
-    credits="Developed by sexfrance"
+    credits="Developed by sexfrance",
+    clear = False
 )
 
 home_screen.display()
