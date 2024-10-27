@@ -51,16 +51,16 @@ class Logger:
 
     def question(self, message: str, start: int = None, end: int = None) -> None:
         time = self.get_time()
-        i = input(f"{self.prefix}[{self.MAGENTAA}{time}{self.PINK}] {Fore.RESET} {self.PINK}[{Fore.BLUE}?{self.PINK}] -> {Fore.RESET} {self.CYAN}{message}{Fore.RESET}")
+        i = input(f"{self.prefix}[{self.MAGENTAA}{time}{self.PINK}]{Fore.RESET} {self.PINK}[{Fore.BLUE}?{self.PINK}] -> {Fore.RESET} {self.CYAN}{message}{Fore.RESET}")
         return i
 
     def info(self, message: str, start: int = None, end: int = None) -> None:
         time = self.get_time()
-        print(f"{self.prefix}[{self.MAGENTAA}{time}{self.PINK}] {Fore.RESET} {self.PINK}[{Fore.BLUE}!{self.PINK}] -> {Fore.RESET} {self.CYAN}{message}{Fore.RESET}")
+        print(f"{self.prefix}[{self.MAGENTAA}{time}{self.PINK}]{Fore.RESET} {self.PINK}[{Fore.BLUE}!{self.PINK}] -> {Fore.RESET} {self.CYAN}{message}{Fore.RESET}")
     
     def debug(self, message: str, start: int = None, end: int = None) -> None:
             time = self.get_time()
-            print(f"{self.prefix}[{self.MAGENTAA}{time}{self.PINK}] {Fore.RESET} {self.PINK}[{Fore.YELLOW}DEBUG{self.PINK}] -> {Fore.RESET} {self.GREEN}{message}{Fore.RESET}")
+            print(f"{self.prefix}[{self.MAGENTAA}{time}{self.PINK}]{Fore.RESET} {self.PINK}[{Fore.YELLOW}DEBUG{self.PINK}] -> {Fore.RESET} {self.GREEN}{message}{Fore.RESET}")
 
 log = Logger()
 
