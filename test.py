@@ -4,6 +4,7 @@ import time
 import uuid
 
 log = Logger(prefix="custom/log/prefix")
+start_time = time.time()
 
 # Log messages
 log.success("Everything is running smoothly!")
@@ -11,7 +12,9 @@ log.warning("Watch out, something might happen!")
 log.failure("Critical error occurred!")
 log.info("System is working properly")
 log.debug(f"The system uuid is {uuid.getnode()}")
+log.message("Dad", f"How are you? I'm gonna come soon!", start=start_time, end=time.time())
 log.question("How old are you? ")
+
 
 # Use loader with custom prefix and context manager
 with Loader(prefix="custom/loader/prefix", desc="Processing data..."):
@@ -32,5 +35,6 @@ home_screen = Home(
 )
 
 home_screen.display()
+
 
 log.success("Processing completed!")

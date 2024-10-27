@@ -39,10 +39,8 @@ class Logger:
 
     def message(self, level: str, message: str, start: int = None, end: int = None) -> None:
         time = self.get_time()
-        if start is not None and end is not None:
-            print(f"{self.prefix}[{self.MAGENTAA}{time}{self.PINK}] {self.PINK}[{self.CYAN}{level}{self.PINK}] -> {Fore.RESET} {self.CYAN}{message}{Fore.RESET} [{Fore.CYAN}{end - start}s{Style.RESET_ALL}]")
-        else:
-            print(f"{self.prefix}[{self.MAGENTAA}{time}{self.PINK}] [{Fore.BLUE}{level}{self.PINK}] -> {Fore.RESET} {self.CYAN}{message}{Fore.RESET}")
+        timer = f" {self.MAGENTAA}In{self.WHITE} -> {self.MAGENTAA}{str(end - start)[:5]} Seconds" if start and end else ""
+        print(f"{self.prefix}[{self.MAGENTAA}{time}{self.PINK}] [{self.CYAN}{level}{self.PINK}] -> [{self.CYAN}{message}{self.PINK}]{timer}")
     
     def message2(self, level: str, message: str, start: int = None, end: int = None) -> None:
         time = self.get_time()
