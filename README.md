@@ -57,6 +57,9 @@ log.info("Informational log message")
 # Debug message
 log.debug("Debugging log message")
 
+# Customizable message
+log.message("Dad", f"How are you? I'm gonna come soon!", start="", end="") # Start and end optional
+
 # Question input
 log.question("This is an input question!")
 ```
@@ -130,8 +133,7 @@ This will display the ASCII art version of "LogMagix" in the center of the termi
 Here’s an example showing both logging, loader, and the new `Home` class functionality:
 
 ```python
-from logmagix.logger import Logger, Loader, Home
-# from logmagix import Logger, Loader
+from logmagix import Logger, Loader, Home
 import time
 import uuid
 
