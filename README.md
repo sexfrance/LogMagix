@@ -130,36 +130,44 @@ This will display the ASCII art version of "LogMagix" in the center of the termi
 Here’s an example showing both logging, loader, and the new `Home` class functionality:
 
 ```python
-from logmagix import Logger, Loader, Home
+from logmagix.logger import Logger, Loader, Home
+# from logmagix import Logger, Loader
 import time
+import uuid
 
 log = Logger(prefix="custom/log/prefix")
+start_time = time.time()
 
 # Log messages
 log.success("Everything is running smoothly!")
 log.warning("Watch out, something might happen!")
 log.failure("Critical error occurred!")
+log.info("System is working properly")
+log.debug(f"The system uuid is {uuid.getnode()}")
+log.message("Dad", f"How are you? I'm gonna come soon!", start=start_time, end=time.time())
+log.question("How old are you? ")
+
 
 # Use loader with custom prefix and context manager
 with Loader(prefix="custom/loader/prefix", desc="Processing data..."):
-    time.sleep(5)  # Simulate task
+    time.sleep(2)  # Simulate task
 
 # Use loader with custom prefix and start/stop methods
-loader = Loader(prefix="custom/loader/prefix", desc="Saving files...", end="Done!", timeout=0.05).start()
-time.sleep(5)  # Simulate task
+loader = Loader(prefix="custom/loader/prefix", desc="Saving files...", end="Done !", timeout=0.05).start()
+time.sleep(2)  # Simulate task
 loader.stop()
 
-# Display Home screen with ASCII art and welcome message
+
 home_screen = Home(
     text="LogMagix",
     align="center",
     adinfo1="discord.cyberious.xyz",
     adinfo2="v1.0",
-    credits="Developed by sexfrance",
-    clear = False
+    credits="Developed by sexfrance"
 )
 
 home_screen.display()
+
 
 log.success("Processing completed!")
 ```
