@@ -39,7 +39,7 @@ class Logger:
 
     def message(self, level: str, message: str, start: int = None, end: int = None) -> None:
         time = self.get_time()
-        timer = f" {self.MAGENTAA}In{self.WHITE} -> {self.MAGENTAA}{str(end - start)[:5]} Seconds" if start and end else ""
+        timer = f" {self.MAGENTAA}In{self.WHITE} -> {self.MAGENTAA}{str(end - start)[:5]} Seconds {Fore.RESET}" if start and end else ""
         print(f"{self.prefix}[{self.MAGENTAA}{time}{self.PINK}] [{self.CYAN}{level}{self.PINK}] -> [{self.CYAN}{message}{self.PINK}]{timer}")
     
     def message2(self, level: str, message: str, start: int = None, end: int = None) -> None:
