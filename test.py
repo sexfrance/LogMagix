@@ -3,7 +3,7 @@ from logmagix.logger import Logger, Loader, Home
 import time
 import uuid
 
-log = Logger(prefix="custom/log/prefix")
+log = Logger(prefix=None)
 start_time = time.time()
 
 # Log messages

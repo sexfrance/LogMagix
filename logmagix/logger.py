@@ -9,7 +9,7 @@ from .font import ascii_art
 from pystyle import Write, System, Colors
 
 class Logger:
-    def __init__(self, prefix: str = "discord.cyberious.xyz"):
+    def __init__(self, prefix: str | None = "discord.cyberious.xyz"):
         self.WHITE = "\u001b[37m"
         self.MAGENTA = "\033[38;5;97m"
         self.MAGENTAA = "\033[38;2;157;38;255m"
@@ -19,7 +19,7 @@ class Logger:
         self.BLUE = "\033[38;5;21m"
         self.PINK = "\033[38;5;176m"
         self.CYAN = "\033[96m"
-        self.prefix = f"{self.PINK}[{self.MAGENTA}{prefix}{self.PINK}] "
+        self.prefix = f"{self.PINK}[{self.MAGENTA}{prefix}{self.PINK}] " if prefix else f"{self.PINK}"
 
     def get_time(self) -> str:
         return datetime.datetime.now().strftime("%H:%M:%S")
