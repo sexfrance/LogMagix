@@ -111,9 +111,8 @@ class Logger:
         if not self._should_log(level):
             return
 
-        # Map log levels to colors and display names
         level_colors = {
-            LogLevel.DEBUG: self.BLUE,
+            LogLevel.DEBUG: self.YELLOW, 
             LogLevel.INFO: self.CYAN,
             LogLevel.WARNING: self.YELLOW,
             LogLevel.SUCCESS: self.GREEN,
@@ -122,7 +121,10 @@ class Logger:
         }
 
         color = level_colors.get(level, self.WHITE)
-        formatted_message = self.message3(f"{color}{level.name}", f"{color}{message}", start, end)
+        if level == LogLevel.DEBUG:
+            formatted_message = self.message3(f"{color}{level.name}", f"{self.GREEN}{message}", start, end)
+        else:
+            formatted_message = self.message3(f"{color}{level.name}", f"{color}{message}", start, end)
         
         with self.log_lock:
             print(formatted_message)
