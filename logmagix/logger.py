@@ -22,130 +22,24 @@ class LogLevel(Enum):
     CRITICAL = 5
 
 class Logger:
-    """Advanced logging system with color support and multiple output formats."""
-
-    COLORS = {
-        "WHITE": "\u001b[37m",
-        "MAGENTA": "\033[38;5;97m",
-        "MAGENTA_BRIGHT": "\033[38;2;157;38;255m",
-        "RED": "\033[38;5;196m",
-        "LIGHT_CORAL": "\033[38;5;210m",
-        "GREEN": "\033[38;5;40m",
-        "YELLOW": "\033[38;5;220m",
-        "BLUE": "\033[38;5;21m",
-        "PINK": "\033[38;5;176m",
-        "CYAN": "\033[96m"
-    }
-
-    def __init__(
-        self, 
-        prefix: Optional[str] = "discord.cyberious.xyz",
-        log_file: Optional[str] = None,
-        max_file_size: int = 10_000_000,
-        backup_count: int = 5
-    ) -> None:
-        """Initialize the logger with the given configuration."""
-        self._setup_colors()
+    def __init__(self, prefix: str | None = "discord.cyberious.xyz"):
+        self.WHITE = "\u001b[37m"
+        self.MAGENTA = "\033[38;5;97m"
+        self.MAGENTAA = "\033[38;2;157;38;255m"
+        self.RED = "\033[38;5;196m"
+        self.GREEN = "\033[38;5;40m"
+        self.YELLOW = "\033[38;5;220m"
+        self.BLUE = "\033[38;5;21m"
+        self.PINK = "\033[38;5;176m"
+        self.CYAN = "\033[96m"
         self.prefix = f"{self.PINK}[{self.MAGENTA}{prefix}{self.PINK}] " if prefix else f"{self.PINK}"
-        self.log_lock = Lock()
-        self.message_buffer: List[tuple] = []
-        self._min_level = LogLevel.DEBUG
-        self._batch_messages = []
-        self._batch_mode = False
-        
-        self.file_handler = self._setup_file_handler(log_file, max_file_size, backup_count) if log_file else None
 
-    def _setup_colors(self) -> None:
-        """Set up color attributes from COLORS dictionary."""
-        for name, value in self.COLORS.items():
-            setattr(self, name, value)
+    def get_time(self) -> str:
+        return datetime.datetime.now().strftime("%H:%M:%S")
 
-    def _setup_file_handler(
-        self, 
-        log_file: str, 
-        max_file_size: int, 
-        backup_count: int
-    ) -> logging.handlers.RotatingFileHandler:
-        """Configure and return a file handler for logging."""
-        handler = logging.handlers.RotatingFileHandler(
-            log_file,
-            maxBytes=max_file_size,
-            backupCount=backup_count
-        )
-        handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
-        return handler
-
-    def set_min_level(self, level: LogLevel) -> None:
-        """Set minimum log level. Messages below this level will not be displayed."""
-        if not isinstance(level, LogLevel):
-            raise ValueError("Level must be a LogLevel enum value")
-        self._min_level = level
-
-    def _should_log(self, level):
-        """Check if message should be logged based on minimum level."""
-        return level.value >= self._min_level.value
-
-    def batch(self) -> None:
-        """Start batch logging - messages will be stored but not displayed"""
-        self._batch_mode = True
-        self._batch_messages = []
-
-    def flush(self) -> None:
-        """Flush all stored messages and display them"""
-        if not self._batch_mode:
-            return
-            
-        with self.log_lock:
-            for msg_data in self._batch_messages:
-                level_str, color, message = msg_data
-                display_level = level_str.capitalize()
-                print(self.message3(f"{color}{display_level}", f"{color}{message}"))
-                if self.file_handler:
-                    level = getattr(LogLevel, level_str)
-                    self._log_to_file(level, message)
-            self._batch_messages.clear()
-        self._batch_mode = False
-
-    def _log(self, level: LogLevel, message: str, start: int = None, end: int = None) -> None:
-        """Internal logging method that handles both console and file output."""
-        if not self._should_log(level):
-            return
-
-        level_colors = {
-            LogLevel.DEBUG: self.YELLOW, 
-            LogLevel.INFO: self.CYAN,
-            LogLevel.WARNING: self.YELLOW,
-            LogLevel.SUCCESS: self.GREEN,
-            LogLevel.ERROR: self.RED,
-            LogLevel.CRITICAL: self.LIGHT_CORAL
-        }
-
-        color = level_colors.get(level, self.WHITE)
-        if level == LogLevel.DEBUG:
-            formatted_message = self.message3(f"{color}{level.name}", f"{self.GREEN}{message}", start, end)
-        else:
-            formatted_message = self.message3(f"{color}{level.name}", f"{color}{message}", start, end)
-        
-        with self.log_lock:
-            print(formatted_message)
-            if self.file_handler:
-                stripped_message = self._strip_colors(formatted_message)
-                self.file_handler.emit(
-                    logging.LogRecord(
-                        name="logger",
-                        level=level.value * 10,
-                        pathname="",
-                        lineno=0,
-                        msg=stripped_message,
-                        args=(),
-                        exc_info=None
-                    )
-                )
-
-    def _strip_colors(self, message: str) -> str:
-        """Remove ANSI color codes from message."""
-        import re
-        return re.sub(r'\033\[[0-9;]*m', '', message)
+    def message3(self, level: str, message: str, start: int = None, end: int = None) -> str:
+        time = self.get_time()
+        return f"{self.prefix}[{self.MAGENTAA}{time}{self.PINK}] {self.PINK}[{self.CYAN}{level}{self.PINK}] -> {self.CYAN}{message}{Fore.RESET}"
 
     def success(self, message: str, start: int = None, end: int = None, level: str = "Success") -> None:
         if self._should_log(LogLevel.SUCCESS):
