@@ -34,16 +34,13 @@ class Logger:
         self.level = level
         self.log_file = log_file
         if log_file:
-            # Create log directory if it doesn't exist
             os.makedirs(os.path.dirname(log_file), exist_ok=True)
-            # Add initial log entry
             self._write_to_log(f"=== Logging started at {datetime.datetime.now()} ===\n")
 
     def _write_to_log(self, message: str) -> None:
         if self.log_file:
             try:
                 with open(self.log_file, 'a', encoding='utf-8') as f:
-                    # Strip ANSI color codes for file logging
                     clean_message = self._strip_ansi(message)
                     f.write(clean_message + '\n')
             except Exception as e:
@@ -101,8 +98,7 @@ class Logger:
         question_message = f"{self.prefix}[{self.BRIGHT_MAGENTA}{time}{self.PINK}]{Fore.RESET} {self.PINK}[{Fore.BLUE}?{self.PINK}] -> {Fore.RESET} {self.CYAN}{message}{Fore.RESET}"
         print(question_message, end='')
         i = input()
-        
-        # Log both the question and answer
+
         if self.log_file:
             self._write_to_log(f"{question_message}")
             self._write_to_log(f"User Answer: {i}")
