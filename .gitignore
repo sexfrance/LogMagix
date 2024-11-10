@@ -39,3 +39,7 @@ ENV/
 # Backup files
 *.bak
 *.swp
+
+# Log
+.log
+logs/

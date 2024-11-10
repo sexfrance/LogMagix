@@ -2,7 +2,7 @@ from logmagix.logger import Logger, Loader, Home, LogLevel
 import time
 import uuid
 
-log = Logger(prefix=None)
+log = Logger(prefix=None, log_file="logs/app.log")
 start_time = time.time()
 
 # Log messages
@@ -23,6 +23,8 @@ with Loader(prefix="custom/loader/prefix", desc="Processing data..."):
 loader = Loader(prefix="custom/loader/prefix", desc="Saving files...", end="Done !", timeout=0.05).start()
 time.sleep(2)  # Simulate task
 loader.stop()
+
+log.critical("Critical error occurred!")
 
 
 home_screen = Home(

@@ -1,13 +1,14 @@
 # LogMagix
 
-**LogMagix** is a custom Python logging package that offers styled, colorful log messages for various logging levels such as success, warning, failure, and more. It also features an animated loader class for providing a visual indicator during long-running operations in the terminal. Additionally, the new `Home` class offers customizable ASCII art displays for greeting users with special messages, branding, or system information.
+**LogMagix** is a custom Python logging package that offers styled, colorful log messages for various logging levels such as success, warning, failure, and more. It also features an animated loader class for providing a visual indicator during long-running operations in the terminal. Additionally, the `Home` class offers customizable ASCII art displays for greeting users with special messages, branding, or system information.
 
 ## 🔥 Features
 
-- Log messages for success, warning, failure, and informational levels.
-- Customize message colors using ANSI escape sequences.
+- Log messages for various levels: success, warning, failure, debug, critical, info, and more.
+- Color customization using ANSI escape sequences.
 - Time-stamped log messages for better tracking.
 - Built-in animated loader for visually appealing loading spinners.
+- Log saving to file with optional log file paths.
 - Customizable log and loader prefixes.
 - ASCII art display for personalized greetings, system info, and branding.
 - Simple and flexible API with multiple ways to use the `Loader` class.
@@ -57,12 +58,41 @@ log.info("Informational log message")
 # Debug message
 log.debug("Debugging log message")
 
-# Customizable message
-log.message("Dad", f"How are you? I'm gonna come soon!", start="", end="") # Start and end optional
-
-# Question input
-log.question("This is an input question!")
+# Critical message (also terminates the program with optional exit code)
+log.critical("Critical failure encountered", exit_code=1)
 ```
+
+### Log Levels
+
+LogMagix provides several logging levels to help categorize the severity and type of log messages. You can configure the minimum log level to display based on your requirements:
+
+- `DEBUG`: For detailed debug messages.
+- `INFO`: For informational messages.
+- `WARNING`: For warning messages.
+- `SUCCESS`: For successful operations.
+- `FAILURE`: For non-critical errors.
+- `CRITICAL`: For critical errors; may terminate the program.
+
+You can set the minimum logging level on initialization by passing a `LogLevel` value to the `Logger` constructor. For example:
+
+```python
+from logmagix import Logger, LogLevel
+
+log = Logger(level=LogLevel.WARNING)
+```
+
+With this setting, only `WARNING`, `SUCCESS`, `FAILURE`, and `CRITICAL` messages will display.
+
+### Log File Saving
+
+You can specify a log file path to save logs to a file for further review or debugging. The logger will automatically strip ANSI color codes from messages saved to the log file for readability. Log files are appended with each new logging session.
+
+```python
+log = Logger(log_file="logs/app.log")
+log.success("This message will also be saved to app.log")
+```
+
+To view logs saved to the file, open the specified path and review the recorded entries, which include timestamped log messages for tracking system state over time.
 
 ### Loading Animation
 
@@ -89,7 +119,7 @@ loader.stop()
 
 ### Custom Log and Loader Prefix
 
-Both the `Logger` and `Loader` classes allow for customizing the prefix that is shown before each message:
+Both the `Logger` and `Loader` classes allow for customizing the prefix shown before each message:
 
 #### Logger Prefix:
 
@@ -146,9 +176,6 @@ log.warning("Watch out, something might happen!")
 log.failure("Critical error occurred!")
 log.info("System is working properly")
 log.debug(f"The system uuid is {uuid.getnode()}")
-log.message("Dad", f"How are you? I'm gonna come soon!", start=start_time, end=time.time())
-log.question("How old are you? ")
-
 
 # Use loader with custom prefix and context manager
 with Loader(prefix="custom/loader/prefix", desc="Processing data..."):
@@ -159,7 +186,6 @@ loader = Loader(prefix="custom/loader/prefix", desc="Saving files...", end="Done
 time.sleep(2)  # Simulate task
 loader.stop()
 
-
 home_screen = Home(
     text="LogMagix",
     align="center",
@@ -169,7 +195,6 @@ home_screen = Home(
 )
 
 home_screen.display()
-
 
 log.success("Processing completed!")
 ```
