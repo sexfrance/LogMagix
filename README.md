@@ -1,27 +1,27 @@
 # LogMagix
 
-**LogMagix** is a custom Python logging package that provides styled, colorful log messages for various logging levels, such as success, warning, failure, and more. It includes advanced features such as batch logging, file logging, customizable animated loaders, and ASCII art displays through the `Home` class, perfect for adding visual appeal to terminal-based applications.
+**LogMagix** is a custom Python logging package that offers styled, colorful log messages for various logging levels such as success, warning, failure, and more. It also features an animated loader class for providing a visual indicator during long-running operations in the terminal. Additionally, the new `Home` class offers customizable ASCII art displays for greeting users with special messages, branding, or system information.
 
 ## 🔥 Features
 
-- **Enhanced Logging Levels**: Support for `LogLevel` enumeration, including `DEBUG`, `INFO`, `WARNING`, `SUCCESS`, `ERROR`, and `CRITICAL`, allowing fine-grained control over log output.
-- **Batch Logging Mode**: Queue messages to batch display them at once.
-- **File Logging**: Optionally log messages to a file with rotating log handlers.
-- **Color Customization**: ANSI escape sequences for colorful terminal output.
-- **Timestamped Messages**: Precise logging with time-based messages.
-- **Loader with Animation**: Built-in animated loader for long-running operations with customizable text and style.
-- **ASCII Art Display**: Display ASCII art with custom messages, branding, or system information.
-- **User Welcome**: Personalized greetings in the ASCII art screen.
+- Log messages for success, warning, failure, and informational levels.
+- Customize message colors using ANSI escape sequences.
+- Time-stamped log messages for better tracking.
+- Built-in animated loader for visually appealing loading spinners.
+- Customizable log and loader prefixes.
+- ASCII art display for personalized greetings, system info, and branding.
+- Simple and flexible API with multiple ways to use the `Loader` class.
+- Customizable text alignment for the `Home` ASCII art display.
 
 ## ⚙️ Installation
 
-Install LogMagix locally:
+To install the package locally, clone the repository and run:
 
 ```bash
 pip install .
 ```
 
-Or via PyPI:
+You can also install it via `pip` from PyPI:
 
 ```bash
 pip install logmagix
@@ -32,151 +32,175 @@ pip install logmagix
 ### Importing the Package
 
 ```python
-from logmagix import Logger, Loader, Home, LogLevel
+from logmagix import Logger, Loader, Home
 ```
 
 ### Logging
 
-Initialize the `Logger` class and log messages at different levels. You can now also set the minimum log level, batch log messages, and write them to a file:
+Initialize the `Logger` class to log messages with different levels:
 
 ```python
-log = Logger(log_file="app.log", prefix="myapp/logs")
+log = Logger()
 
-# Set minimum log level to control the output (optional)
-log.set_min_level(LogLevel.INFO)
-
-# Log levels
+# Success message
 log.success("Operation completed successfully!")
+
+# Failure message
 log.failure("Something went wrong!")
+
+# Warning message
 log.warning("This is a warning!")
+
+# Informational message
 log.info("Informational log message")
+
+# Debug message
 log.debug("Debugging log message")
-log.critical("Critical error encountered", exit_code=1)  # Exits after logging
-log.message("Custom", "Custom message with prefix")
 
-# Batch Logging Example
-log.batch()  # Start batch mode
-log.success("Batch message 1")
-log.info("Batch message 2")
-log.flush()  # Output all batched messages
-```
+# Customizable message
+log.message("Dad", f"How are you? I'm gonna come soon!", start="", end="") # Start and end optional
 
-### File Logging
-
-Save logs to a file with rotation options:
-
-```python
-log = Logger(
-    log_file="my_app.log",
-    max_file_size=5_000_000,  # 5MB max file size
-    backup_count=3            # Keep 3 backup files
-)
-log.info("Logging to file with rotation setup!")
+# Question input
+log.question("This is an input question!")
 ```
 
 ### Loading Animation
 
-Use the `Loader` class in two ways:
+The `Loader` class can be used in two ways:
 
-1. **Context Manager**:
+#### Using a context manager:
 
-   ```python
-   from time import sleep
+```python
+from time import sleep
 
-   with Loader(desc="Loading data..."):
-       sleep(2)
-   ```
+with Loader(desc="Loading with context manager..."):
+    for i in range(10):
+        sleep(0.25)
+```
 
-2. **Start/Stop Methods**:
+#### Using `start()` and `stop()` methods:
 
-   ```python
-   loader = Loader(desc="Saving files...", end="Done!").start()
-   sleep(2)
-   loader.stop()
-   ```
+```python
+loader = Loader(desc="Loading with object...", end="That was fast!", timeout=0.05).start()
+for i in range(10):
+    sleep(0.25)
+loader.stop()
+```
 
-### ASCII Art and Welcome Display
+### Custom Log and Loader Prefix
 
-The `Home` class allows you to display ASCII art along with user greetings and system information.
+Both the `Logger` and `Loader` classes allow for customizing the prefix that is shown before each message:
+
+#### Logger Prefix:
+
+```python
+log = Logger(prefix=".myapp/logs")
+log.success("This message has a custom log prefix!")
+```
+
+#### Loader Prefix:
+
+```python
+loader = Loader(prefix=".myapp/loader", desc="Loading with a custom loader prefix...")
+loader.start()
+time.sleep(5)  # Simulate a task
+loader.stop()
+```
+
+### ASCII Art and Greeting (New `Home` Class)
+
+The `Home` class lets you display customized ASCII art text along with system information, such as a welcome message, username, or credits.
+
+#### Using the `Home` Class:
 
 ```python
 home_screen = Home(
     text="LogMagix",
     align="center",
-    adinfo1="logmagix.io",
-    adinfo2="v1.2",
-    credits="Developed by sexfrance"
+    adinfo1="discord.cyberious.xyz",
+    adinfo2="v1.0",
+    credits="Developed by sexfrance",
+    clear = False, # To clear the console, default is True
 )
+
 home_screen.display()
 ```
 
+This will display the ASCII art version of "LogMagix" in the center of the terminal, along with optional `adinfo1` and `adinfo2` texts at the bottom. The terminal width is automatically detected to align the text properly.
+
 ### Full Example
 
-Here’s an example showing logging, loader, and the `Home` ASCII art functionality:
+Here’s an example showing both logging, loader, and the new `Home` class functionality:
 
 ```python
 from logmagix import Logger, Loader, Home
 import time
+import uuid
 
-log = Logger(log_file="app.log", prefix="myapp")
+log = Logger(prefix="custom/log/prefix")
+start_time = time.time()
 
-# Logging
+# Log messages
 log.success("Everything is running smoothly!")
-log.warning("This is just a warning!")
-log.failure("A critical error occurred.")
-log.debug("System debug message")
+log.warning("Watch out, something might happen!")
+log.failure("Critical error occurred!")
+log.info("System is working properly")
+log.debug(f"The system uuid is {uuid.getnode()}")
+log.message("Dad", f"How are you? I'm gonna come soon!", start=start_time, end=time.time())
+log.question("How old are you? ")
 
-# Loader with context manager
-with Loader(prefix="myapp/loader", desc="Processing data..."):
-    time.sleep(2)
 
-# ASCII Art Home screen
+# Use loader with custom prefix and context manager
+with Loader(prefix="custom/loader/prefix", desc="Processing data..."):
+    time.sleep(2)  # Simulate task
+
+# Use loader with custom prefix and start/stop methods
+loader = Loader(prefix="custom/loader/prefix", desc="Saving files...", end="Done !", timeout=0.05).start()
+time.sleep(2)  # Simulate task
+loader.stop()
+
+
 home_screen = Home(
     text="LogMagix",
     align="center",
-    adinfo1="https://logmagix.io",
-    adinfo2="v1.2",
+    adinfo1="discord.cyberious.xyz",
+    adinfo2="v1.0",
     credits="Developed by sexfrance"
 )
+
 home_screen.display()
+
+
+log.success("Processing completed!")
 ```
 
-## 🛠️ Configuration Options
+### Customization in `Home` Class
 
-### Logger
+- **text**: The text to be displayed in ASCII art.
+- **align**: Align the ASCII art text to "left", "center", or "right" in the terminal.
+- **adinfo1** and **adinfo2**: Additional information displayed below the ASCII art.
+- **credits**: Optional credits or user information.
 
-- **Log Levels**: Control which levels to log using `LogLevel` enumeration, including `DEBUG`, `INFO`, `WARNING`, `SUCCESS`, `ERROR`, and `CRITICAL`. Set a minimum level to ignore lower-priority messages.
-- **prefix**: Custom prefix before each log message.
-- **log_file**: File path to log messages.
-- **max_file_size**: Maximum size for log files (default is 10MB).
-- **backup_count**: Number of backup log files to keep.
+## ❗ Requirements
 
-### Loader
+LogMagix requires:
 
-- **desc**: Description displayed alongside the loading animation.
-- **end**: Text displayed after the loader stops.
-- **timeout**: Delay between animation frames (in seconds).
+- `colorama` for cross-platform color support in the terminal.
+- `pystyle` for creating the colored text effects.
 
-### Home
+To install dependencies, run:
 
-- **text**: ASCII text to display.
-- **align**: Text alignment in the terminal ("left", "center", "right").
-- **adinfo1 / adinfo2**: Additional info displayed below the ASCII art.
-- **credits**: Custom credits or developer name.
-
-## 🖥️ Contributing
-
-Contributions are welcome! To contribute:
-
-1. Fork the repository.
-2. Make your changes.
-3. Submit a pull request for review.
-
-For major changes, please open an issue first to discuss what you’d like to change.
+```bash
+pip install colorama pystyle
+```
 
 ## ©️ License
 
-LogMagix is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+LogMagix is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
+
+## 🖥️ Contributing
+
+Contributions are welcome! Feel free to fork the repository, make changes, and submit a pull request.
 
 ## 👤 Author
 
