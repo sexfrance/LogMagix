@@ -2,9 +2,9 @@ from setuptools import setup, find_packages
 
 setup(
     name="logmagix",                   
-    version="2.0.5",                           
+    version="2.0.6",                           
     packages=find_packages(),               
-    install_requires=["colorama"],           
+    install_requires=["colorama",  "pystyle"],           
     author="Sexfrance",                     
     author_email="bwuuuuu@gmail.com",   
     description="A custom logger package",   
