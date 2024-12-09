@@ -33,6 +33,7 @@ class Logger:
         self.prefix = f"{self.PINK}[{self.MAGENTA}{prefix}{self.PINK}] " if prefix else f"{self.PINK}"
         self.level = level
         self.log_file = log_file
+        self.time = self.get_time()
         if log_file:
             os.makedirs(os.path.dirname(log_file), exist_ok=True)
             self._write_to_log(f"=== Logging started at {datetime.datetime.now()} ===\n")
@@ -55,77 +56,74 @@ class Logger:
         return datetime.datetime.now().strftime("%H:%M:%S")
 
     def message3(self, level: str, message: str, start: int = None, end: int = None) -> str:
-        time = self.get_time()
-        return f"{self.prefix}[{self.BRIGHT_MAGENTA}{time}{self.PINK}] {self.PINK}[{self.CYAN}{level}{self.PINK}] -> {self.CYAN}{message}{Fore.RESET}"
+        return f"{self.prefix}[{self.BRIGHT_MAGENTA}{self.time}{self.PINK}] {self.PINK}[{self.CYAN}{level}{self.PINK}] -> {self.CYAN}{message}{Fore.RESET}"
 
     def _should_log(self, message_level: LogLevel) -> bool:
         return message_level.value >= self.level.value
 
     def success(self, message: str, start: int = None, end: int = None, level: str = "Success") -> None:
         if self._should_log(LogLevel.SUCCESS):
-            log_message = self.message3(f"{self.GREEN}{level}", f"{self.GREEN}{message}", start, end)
+            timer = f" {self.BRIGHT_MAGENTA}In{self.WHITE} -> {self.BRIGHT_MAGENTA}{str(end - start)[:5]} Seconds {Fore.RESET}" if start and end else ""
+            log_message = self.message3(f"{self.GREEN}{level}", f"{self.GREEN}{message}", start, end) + timer
             print(log_message)
             self._write_to_log(log_message)
 
     def failure(self, message: str, start: int = None, end: int = None, level: str = "Failure") -> None:
         if self._should_log(LogLevel.FAILURE):
-            log_message = self.message3(f"{self.RED}{level}", f"{self.RED}{message}", start, end)
+            timer = f" {self.BRIGHT_MAGENTA}In{self.WHITE} -> {self.BRIGHT_MAGENTA}{str(end - start)[:5]} Seconds {Fore.RESET}" if start and end else ""
+            log_message = self.message3(f"{self.RED}{level}", f"{self.RED}{message}", start, end) + timer
             print(log_message)
             self._write_to_log(log_message)
     
     def warning(self, message: str, start: int = None, end: int = None, level: str = "Warning") -> None:
         if self._should_log(LogLevel.WARNING):
-            log_message = self.message3(f"{self.YELLOW}{level}", f"{self.YELLOW}{message}", start, end)
+            timer = f" {self.BRIGHT_MAGENTA}In{self.WHITE} -> {self.BRIGHT_MAGENTA}{str(end - start)[:5]} Seconds {Fore.RESET}" if start and end else ""
+            log_message = self.message3(f"{self.YELLOW}{level}", f"{self.YELLOW}{message}", start, end) + timer
             print(log_message)
             self._write_to_log(log_message)
 
     def message(self, level: str, message: str, start: int = None, end: int = None) -> None:
-        time = self.get_time()
         timer = f" {self.BRIGHT_MAGENTA}In{self.WHITE} -> {self.BRIGHT_MAGENTA}{str(end - start)[:5]} Seconds {Fore.RESET}" if start and end else ""
-        log_message = f"{self.prefix}[{self.BRIGHT_MAGENTA}{time}{self.PINK}] [{self.CYAN}{level}{self.PINK}] -> [{self.CYAN}{message}{self.PINK}]{timer}"
+        log_message = f"{self.prefix}[{self.BRIGHT_MAGENTA}{self.time}{self.PINK}] [{self.CYAN}{level}{self.PINK}] -> [{self.CYAN}{message}{self.PINK}]{timer}"
         print(log_message)
         self._write_to_log(log_message)
     
-    def message2(self, level: str, message: str, start: int = None, end: int = None) -> None:
-        time = self.get_time()
-        if start is not None and end is not None:
-            print(f"{self.prefix}[{self.BRIGHT_MAGENTA}{time}{self.PINK}] {self.PINK}[{self.CYAN}{level}{self.PINK}] -> {Fore.RESET} {self.CYAN}{message}{Fore.RESET} [{Fore.CYAN}{end - start}s{Style.RESET_ALL}]", end="\r")
+    def message2(self, level: str, message: str, start: int = None, end: int = None) -> None: 
+        if start and end:
+            print(f"{self.prefix}[{self.BRIGHT_MAGENTA}{self.time}{self.PINK}] {self.PINK}[{self.CYAN}{level}{self.PINK}] -> {Fore.RESET} {self.CYAN}{message}{Fore.RESET} [{Fore.CYAN}{end - start}s{Style.RESET_ALL}]", end="\r")
         else:
-            print(f"{self.prefix}[{self.BRIGHT_MAGENTA}{time}{self.PINK}] {self.PINK}[{Fore.BLUE}{level}{self.PINK}] -> {Fore.RESET} {self.CYAN}{message}{Fore.RESET}", end="\r")
+            print(f"{self.prefix}[{self.BRIGHT_MAGENTA}{self.time}{self.PINK}] {self.PINK}[{Fore.BLUE}{level}{self.PINK}] -> {Fore.RESET} {self.CYAN}{message}{Fore.RESET}", end="\r")
 
     def question(self, message: str, start: int = None, end: int = None) -> None:
-        time = self.get_time()
-        question_message = f"{self.prefix}[{self.BRIGHT_MAGENTA}{time}{self.PINK}]{Fore.RESET} {self.PINK}[{Fore.BLUE}?{self.PINK}] -> {Fore.RESET} {self.CYAN}{message}{Fore.RESET}"
+        question_message = f"{self.prefix}[{self.BRIGHT_MAGENTA}{self.time}{self.PINK}]{Fore.RESET} {self.PINK}[{Fore.BLUE}?{self.PINK}] -> {Fore.RESET} {self.CYAN}{message}{Fore.RESET}"
         print(question_message, end='')
         i = input()
-
-        if self.log_file:
-            self._write_to_log(f"{question_message}")
-            self._write_to_log(f"User Answer: {i}")
+        self._write_to_log(f"{question_message}")
+        self._write_to_log(f"User Answer: {i}")
         
         return i
 
     def critical(self, message: str, start: int = None, end: int = None, level: str = "CRITICAL", exit_code: int = 1) -> None:
         if self._should_log(LogLevel.CRITICAL):
-            time = self.get_time()
-            log_message = f"{self.prefix}[{self.BRIGHT_MAGENTA}{time}{self.PINK}]{Fore.RESET} {self.PINK}[{self.LIGHT_CORAL}{level}{self.PINK}] -> {self.LIGHT_CORAL}{message}{Fore.RESET}"
+            timer = f" {self.BRIGHT_MAGENTA}In{self.WHITE} -> {self.BRIGHT_MAGENTA}{str(end - start)[:5]} Seconds {Fore.RESET}" if start and end else ""
+            log_message = f"{self.prefix}[{self.BRIGHT_MAGENTA}{self.time}{self.PINK}]{Fore.RESET} {self.PINK}[{self.RED}{level}{self.PINK}] -> {self.LIGHT_CORAL}{message}{Fore.RESET}" + timer
             print(log_message)
-            self._write_to_log(log_message)
             input()
+            self._write_to_log(log_message)
             self._write_to_log(f"=== Program terminated with exit code {exit_code} at {datetime.datetime.now()} ===")
             exit(exit_code)
 
     def info(self, message: str, start: int = None, end: int = None) -> None:
         if self._should_log(LogLevel.INFO):
-            time = self.get_time()
-            log_message = f"{self.prefix}[{self.BRIGHT_MAGENTA}{time}{self.PINK}]{Fore.RESET} {self.PINK}[{Fore.BLUE}!{self.PINK}] -> {Fore.RESET} {self.CYAN}{message}{Fore.RESET}"
+            timer = f" {self.BRIGHT_MAGENTA}In{self.WHITE} -> {self.BRIGHT_MAGENTA}{str(end - start)[:5]} Seconds {Fore.RESET}" if start and end else ""
+            log_message = f"{self.prefix}[{self.BRIGHT_MAGENTA}{self.time}{self.PINK}]{Fore.RESET} {self.PINK}[{Fore.BLUE}!{self.PINK}] -> {Fore.RESET} {self.CYAN}{message}{Fore.RESET}" + timer
             print(log_message)
             self._write_to_log(log_message)
     
     def debug(self, message: str, start: int = None, end: int = None) -> None:
         if self._should_log(LogLevel.DEBUG):
-            time = self.get_time()
-            log_message = f"{self.prefix}[{self.BRIGHT_MAGENTA}{time}{self.PINK}]{Fore.RESET} {self.PINK}[{Fore.YELLOW}DEBUG{self.PINK}] -> {Fore.RESET} {self.GREEN}{message}{Fore.RESET}"
+            timer = f" {self.BRIGHT_MAGENTA}In{self.WHITE} -> {self.BRIGHT_MAGENTA}{str(end - start)[:5]} Seconds {Fore.RESET}" if start and end else ""
+            log_message = f"{self.prefix}[{self.BRIGHT_MAGENTA}{self.time}{self.PINK}]{Fore.RESET} {self.PINK}[{Fore.YELLOW}DEBUG{self.PINK}] -> {Fore.RESET} {self.GREEN}{message}{Fore.RESET}" + timer
             print(log_message)
             self._write_to_log(log_message)
 
