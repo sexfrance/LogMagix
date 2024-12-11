@@ -75,6 +75,13 @@ class Logger:
             print(log_message)
             self._write_to_log(log_message)
     
+    def error(self, message: str, start: int = None, end: int = None, level: str = "Error") -> None:
+        if self._should_log(LogLevel.FAILURE):
+            timer = f" {self.BRIGHT_MAGENTA}In{self.WHITE} -> {self.BRIGHT_MAGENTA}{str(end - start)[:5]} Seconds {Fore.RESET}" if start and end else ""
+            log_message = self.message3(f"{self.RED}{level}", f"{self.RED}{message}", start, end) + timer
+            print(log_message)
+            self._write_to_log(log_message)
+    
     def warning(self, message: str, start: int = None, end: int = None, level: str = "Warning") -> None:
         if self._should_log(LogLevel.WARNING):
             timer = f" {self.BRIGHT_MAGENTA}In{self.WHITE} -> {self.BRIGHT_MAGENTA}{str(end - start)[:5]} Seconds {Fore.RESET}" if start and end else ""
