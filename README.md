@@ -230,3 +230,12 @@ Contributions are welcome! Feel free to fork the repository, make changes, and s
 ## 👤 Author
 
 LogMagix is developed and maintained by **sexfrance**.
+
+<p align="center">
+  <img src="https://img.shields.io/github/license/sexfrance/LogMagix.svg?style=for-the-badge&labelColor=black&color=f429ff&logo=IOTA"/>
+  <img src="https://img.shields.io/github/stars/sexfrance/LogMagix.svg?style=for-the-badge&labelColor=black&color=f429ff&logo=IOTA"/>
+  <img src="https://img.shields.io/github/languages/top/sexfrance/LogMagix.svg?style=for-the-badge&labelColor=black&color=f429ff&logo=python"/>
+  <img alt="PyPI - Downloads" src="https://img.shields.io/pypi/dm/logmagix?style=for-the-badge&labelColor=black&color=f429ff&logo=IOTA">
+
+</p>
+
