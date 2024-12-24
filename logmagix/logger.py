@@ -19,7 +19,7 @@ class LogLevel(Enum):
     CRITICAL = 6
 
 class Logger:
-    def __init__(self, prefix: str | None = "discord.cyberious.xyz", level: LogLevel = LogLevel.DEBUG, log_file: str | None = None):
+    def __init__(self, prefix: str | None = "discord.cyberious.xyz", github_repository: str = None, level: LogLevel = LogLevel.DEBUG, log_file: str | None = None):
         self.WHITE = "\u001b[37m"
         self.MAGENTA = "\033[38;5;97m"
         self.BRIGHT_MAGENTA = "\033[38;2;157;38;255m"
@@ -32,11 +32,32 @@ class Logger:
         self.CYAN = "\033[96m"
         self.prefix = f"{self.PINK}[{self.MAGENTA}{prefix}{self.PINK}] " if prefix else f"{self.PINK}"
         self.level = level
+        self.repo_url = github_repository
         self.log_file = log_file
         self.time = self.get_time()
+
         if log_file:
             os.makedirs(os.path.dirname(log_file), exist_ok=True)
             self._write_to_log(f"=== Logging started at {datetime.datetime.now()} ===\n")
+        
+        if self.repo_url:
+            username = self._extract_github_username(self.repo_url)
+            if username:
+                log.info(f"Developed by {username} - {self.repo_url}")
+            else:
+                log.info(f"GitHub Repository: {self.repo_url}")
+
+    def _extract_github_username(self, url: str) -> str | None:
+        url = url.replace('https://', '').replace('http://', '').replace('www.', '')
+        patterns = [
+            r'^github\.com/([^/]+)(?:/.*)?$',  # github.com/username or username/repo
+            r'^([^/]+)(?:/.*)?$',              # username or username/repo
+            r'^@(.+)$'                         # @username
+        ]
+        for pattern in patterns:
+            if match := re.search(pattern, url):
+                return match.group(1).rstrip('/ \t\n\r')
+        return None
 
     def _write_to_log(self, message: str) -> None:
         if self.log_file:

@@ -1,8 +1,13 @@
-from logmagix.logger import Logger, Loader, Home, LogLevel
+from logmagix import Logger, Home, Loader, LogLevel
 import time
 import uuid
 
-log = Logger(prefix=None, log_file="logs/app.log")
+log = Logger(
+    prefix="LogMagix",
+    github_repository="https://github.com/sexfrance/LogMagix",
+    level=LogLevel.DEBUG,
+    log_file="logs/app.log"
+)
 start_time = time.time()
 
 # Log messages

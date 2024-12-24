@@ -1,6 +1,31 @@
 # LogMagix
+Beautiful & Simple Python Logger
 
-**LogMagix** is a custom Python logging package that offers styled, colorful log messages for various logging levels such as success, warning, failure, and more. It also features an animated loader class for providing a visual indicator during long-running operations in the terminal. Additionally, the `Home` class offers customizable ASCII art displays for greeting users with special messages, branding, or system information.
+## Installation
+```bash
+git clone https://github.com/sexfance/logmagix
+cd logmagix
+pip install -e .
+```
+
+## Usage
+```python
+from logmagix import Logger, LogLevel
+
+# Initialize with GitHub repository
+log = Logger(
+    prefix="MyApp",
+    github_repository="https://github.com/sexfance/logmagix",
+    level=LogLevel.DEBUG
+)
+
+# Basic logging
+log.info("Hello World!")
+log.success("Operation completed!")
+log.warning("Something might be wrong")
+log.error("An error occurred")
+log.critical("Fatal error", exit_code=1)
+```
 
 ## 🔥 Features
 
