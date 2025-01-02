@@ -34,7 +34,6 @@ class Logger:
         self.level = level
         self.repo_url = github_repository
         self.log_file = log_file
-        self.time = self.get_time()
 
         if log_file:
             os.makedirs(os.path.dirname(log_file), exist_ok=True)
@@ -77,7 +76,8 @@ class Logger:
         return datetime.datetime.now().strftime("%H:%M:%S")
 
     def message3(self, level: str, message: str, start: int = None, end: int = None) -> str:
-        return f"{self.prefix}[{self.BRIGHT_MAGENTA}{self.time}{self.PINK}] {self.PINK}[{self.CYAN}{level}{self.PINK}] -> {self.CYAN}{message}{Fore.RESET}"
+        current_time = self.get_time()
+        return f"{self.prefix}[{self.BRIGHT_MAGENTA}{current_time}{self.PINK}] {self.PINK}[{self.CYAN}{level}{self.PINK}] -> {self.CYAN}{message}{Fore.RESET}"
 
     def _should_log(self, message_level: LogLevel) -> bool:
         return message_level.value >= self.level.value
@@ -112,18 +112,18 @@ class Logger:
 
     def message(self, level: str, message: str, start: int = None, end: int = None) -> None:
         timer = f" {self.BRIGHT_MAGENTA}In{self.WHITE} -> {self.BRIGHT_MAGENTA}{str(end - start)[:5]} Seconds {Fore.RESET}" if start and end else ""
-        log_message = f"{self.prefix}[{self.BRIGHT_MAGENTA}{self.time}{self.PINK}] [{self.CYAN}{level}{self.PINK}] -> [{self.CYAN}{message}{self.PINK}]{timer}"
+        log_message = f"{self.prefix}[{self.BRIGHT_MAGENTA}{self.get_time()}{self.PINK}] [{self.CYAN}{level}{self.PINK}] -> [{self.CYAN}{message}{self.PINK}]{timer}"
         print(log_message)
         self._write_to_log(log_message)
     
     def message2(self, level: str, message: str, start: int = None, end: int = None) -> None: 
         if start and end:
-            print(f"{self.prefix}[{self.BRIGHT_MAGENTA}{self.time}{self.PINK}] {self.PINK}[{self.CYAN}{level}{self.PINK}] -> {Fore.RESET} {self.CYAN}{message}{Fore.RESET} [{Fore.CYAN}{end - start}s{Style.RESET_ALL}]", end="\r")
+            print(f"{self.prefix}[{self.BRIGHT_MAGENTA}{self.get_time()}{self.PINK}] {self.PINK}[{self.CYAN}{level}{self.PINK}] -> {Fore.RESET} {self.CYAN}{message}{Fore.RESET} [{Fore.CYAN}{end - start}s{Style.RESET_ALL}]", end="\r")
         else:
-            print(f"{self.prefix}[{self.BRIGHT_MAGENTA}{self.time}{self.PINK}] {self.PINK}[{Fore.BLUE}{level}{self.PINK}] -> {Fore.RESET} {self.CYAN}{message}{Fore.RESET}", end="\r")
+            print(f"{self.prefix}[{self.BRIGHT_MAGENTA}{self.get_time()}{self.PINK}] {self.PINK}[{Fore.BLUE}{level}{self.PINK}] -> {Fore.RESET} {self.CYAN}{message}{Fore.RESET}", end="\r")
 
     def question(self, message: str, start: int = None, end: int = None) -> None:
-        question_message = f"{self.prefix}[{self.BRIGHT_MAGENTA}{self.time}{self.PINK}]{Fore.RESET} {self.PINK}[{Fore.BLUE}?{self.PINK}] -> {Fore.RESET} {self.CYAN}{message}{Fore.RESET}"
+        question_message = f"{self.prefix}[{self.BRIGHT_MAGENTA}{self.get_time()}{self.PINK}]{Fore.RESET} {self.PINK}[{Fore.BLUE}?{self.PINK}] -> {Fore.RESET} {self.CYAN}{message}{Fore.RESET}"
         print(question_message, end='')
         i = input()
         self._write_to_log(f"{question_message}")
@@ -134,7 +134,7 @@ class Logger:
     def critical(self, message: str, start: int = None, end: int = None, level: str = "CRITICAL", exit_code: int = 1) -> None:
         if self._should_log(LogLevel.CRITICAL):
             timer = f" {self.BRIGHT_MAGENTA}In{self.WHITE} -> {self.BRIGHT_MAGENTA}{str(end - start)[:5]} Seconds {Fore.RESET}" if start and end else ""
-            log_message = f"{self.prefix}[{self.BRIGHT_MAGENTA}{self.time}{self.PINK}]{Fore.RESET} {self.PINK}[{self.RED}{level}{self.PINK}] -> {self.LIGHT_CORAL}{message}{Fore.RESET}" + timer
+            log_message = f"{self.prefix}[{self.BRIGHT_MAGENTA}{self.get_time()}{self.PINK}]{Fore.RESET} {self.PINK}[{self.RED}{level}{self.PINK}] -> {self.LIGHT_CORAL}{message}{Fore.RESET}" + timer
             print(log_message)
             input()
             self._write_to_log(log_message)
@@ -144,14 +144,14 @@ class Logger:
     def info(self, message: str, start: int = None, end: int = None) -> None:
         if self._should_log(LogLevel.INFO):
             timer = f" {self.BRIGHT_MAGENTA}In{self.WHITE} -> {self.BRIGHT_MAGENTA}{str(end - start)[:5]} Seconds {Fore.RESET}" if start and end else ""
-            log_message = f"{self.prefix}[{self.BRIGHT_MAGENTA}{self.time}{self.PINK}]{Fore.RESET} {self.PINK}[{Fore.BLUE}!{self.PINK}] -> {Fore.RESET} {self.CYAN}{message}{Fore.RESET}" + timer
+            log_message = f"{self.prefix}[{self.BRIGHT_MAGENTA}{self.get_time()}{self.PINK}]{Fore.RESET} {self.PINK}[{Fore.BLUE}!{self.PINK}] -> {Fore.RESET} {self.CYAN}{message}{Fore.RESET}" + timer
             print(log_message)
             self._write_to_log(log_message)
     
     def debug(self, message: str, start: int = None, end: int = None) -> None:
         if self._should_log(LogLevel.DEBUG):
             timer = f" {self.BRIGHT_MAGENTA}In{self.WHITE} -> {self.BRIGHT_MAGENTA}{str(end - start)[:5]} Seconds {Fore.RESET}" if start and end else ""
-            log_message = f"{self.prefix}[{self.BRIGHT_MAGENTA}{self.time}{self.PINK}]{Fore.RESET} {self.PINK}[{Fore.YELLOW}DEBUG{self.PINK}] -> {Fore.RESET} {self.GREEN}{message}{Fore.RESET}" + timer
+            log_message = f"{self.prefix}[{self.BRIGHT_MAGENTA}{self.get_time()}{self.PINK}]{Fore.RESET} {self.PINK}[{Fore.YELLOW}DEBUG{self.PINK}] -> {Fore.RESET} {self.GREEN}{message}{Fore.RESET}" + timer
             print(log_message)
             self._write_to_log(log_message)
 
@@ -163,7 +163,7 @@ class Loader:
         self.end = end
         self.prefix = prefix
         self.timeout = timeout
-        self.time = datetime.datetime.now().strftime("%H:%M:%S")
+        self.time = None  # Remove time initialization
         self.start_time = datetime.datetime.now()
 
         self._thread = Thread(target=self._animate, daemon=True)
@@ -185,14 +185,16 @@ class Loader:
         for c in cycle(self.steps):
             if self.done:
                 break
-            loader_message = f"\r{log.PINK}[{log.MAGENTA}{self.prefix}{log.PINK}] [{log.BRIGHT_MAGENTA}{self.time}{log.PINK}] [{log.GREEN}{self.desc}{log.PINK}]{Fore.RESET} {c}"
+            current_time = datetime.datetime.now().strftime("%H:%M:%S")  # Get current time each iteration
+            loader_message = f"\r{log.PINK}[{log.MAGENTA}{self.prefix}{log.PINK}] [{log.BRIGHT_MAGENTA}{current_time}{log.PINK}] [{log.GREEN}{self.desc}{log.PINK}]{Fore.RESET} {c}"
             print(loader_message, flush=True, end="")
             time.sleep(self.timeout)
 
     def stop(self):
         self.done = True
         if self.end != "\r":
-            end_message = f"\n{log.PINK}[{log.MAGENTA}{self.prefix}{log.PINK}] [{log.BRIGHT_MAGENTA}{self.time}{log.PINK}] {log.GREEN} {self.end} {Fore.RESET}"
+            current_time = datetime.datetime.now().strftime("%H:%M:%S")  # Get current time for stop message
+            end_message = f"\n{log.PINK}[{log.MAGENTA}{self.prefix}{log.PINK}] [{log.BRIGHT_MAGENTA}{current_time}{log.PINK}] {log.GREEN} {self.end} {Fore.RESET}"
             print(end_message, flush=True)
         else:
             print(self.end, flush=True)
@@ -280,7 +282,7 @@ class Home:
         if self.adinfo1 and self.adinfo2:
             total_adinfo_length = len(self.adinfo1) + len(self.adinfo2)
             remaining_space = ascii_art_width - total_adinfo_length
-            if remaining_space > 0:
+            if (remaining_space > 0):
                 padding_between = '  ' * (remaining_space // 3)
                 return self.adinfo1 + padding_between + self.adinfo2
             else:
