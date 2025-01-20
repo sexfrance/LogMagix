@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="logmagix",                   
-    version="2.1.0",                           
+    version="2.1.0.1",                           
     packages=find_packages(),               
     install_requires=["colorama",  "pystyle"],           
     author="Sexfrance",                     

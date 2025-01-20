@@ -4,14 +4,13 @@ import uuid
 
 # Test ColorLogger (Style 1 - Default)
 log1 = Logger(
-    prefix="ColorLogger",
     github_repository="https://github.com/sexfrance/LogMagix",
     level=LogLevel.DEBUG,
     log_file="logs/color.log"
 )
-print("\nTesting ColorLogger (Style 1):")
+
 start_time = time.time()
-log1.success("Everything is running smoothly!")
+log1.success("We are running style 1!")
 log1.warning("Watch out, something might happen!")
 log1.failure("Critical error occurred!")
 log1.info("System is working properly")
@@ -23,13 +22,12 @@ log1.question("How old are you? ")
 log2 = Logger(
     style=2,
     prefix="SimpleLogger",
-    github_repository="https://github.com/sexfrance/LogMagix",
-    level=LogLevel.DEBUG,
+    level=LogLevel.INFO,
     log_file="logs/simple.log"
 )
-print("\nTesting SimpleLogger (Style 2):")
+
 start_time = time.time()
-log2.success("Everything is running smoothly!")
+log2.success("We are running style 2 !")
 log2.info("System is working properly")
 log2.error("Critical error occurred!")
 log2.warning("Watch out, something might happen!")

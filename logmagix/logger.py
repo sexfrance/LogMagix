@@ -28,13 +28,6 @@ class BaseLogger:
         if log_file:
             os.makedirs(os.path.dirname(log_file), exist_ok=True)
             self._write_to_log(f"=== Logging started at {datetime.datetime.now()} ===\n")
-        
-        if self.repo_url:
-            username = self._extract_github_username(self.repo_url)
-            if username:
-                self.info(f"Developed by {username} - {self.repo_url}")
-            else:
-                self.info(f"GitHub Repository: {self.repo_url}")
 
     def _extract_github_username(self, url: str) -> str | None:
         url = url.replace('https://', '').replace('http://', '').replace('www.', '')
@@ -81,6 +74,13 @@ class ColorLogger(BaseLogger):
         self.CYAN = "\033[96m"
         super().__init__(*args, **kwargs)
         self.prefix = f"{self.PINK}[{self.MAGENTA}{self.prefix}{self.PINK}] " if self.prefix else f"{self.PINK}"
+
+        if self.repo_url:
+            username = self._extract_github_username(self.repo_url)
+            if username:
+                self.info(f"Developed by {username} - {self.repo_url}")
+            else:
+                self.info(f"GitHub Repository: {self.repo_url}")
 
     def message3(self, level: str, message: str, start: int = None, end: int = None) -> str:
         current_time = self.get_time()
@@ -164,6 +164,13 @@ class SimpleLogger(BaseLogger):
         super().__init__(*args, **kwargs)
         self.prefix = f"{Fore.BLACK}{self.get_time()} » {Fore.RESET}"
 
+        if self.repo_url:
+            username = self._extract_github_username(self.repo_url)
+            if username:
+                self.info(f"Developed by {username} - {self.repo_url}")
+            else:
+                self.info(f"GitHub Repository: {self.repo_url}")
+
     def success(self, message: str, start: int = None, end: int = None, level: str = "SUCCESS") -> None:
         if self._should_log(LogLevel.SUCCESS):
             timer = f" (In {str(end - start)[:5]}s)" if start and end else ""
@@ -174,7 +181,7 @@ class SimpleLogger(BaseLogger):
     def error(self, message: str, start: int = None, end: int = None, level: str = "ERROR") -> None:
         if self._should_log(LogLevel.FAILURE):
             timer = f" (In {str(end - start)[:5]}s)" if start and end else ""
-            log_message = f"{self.prefix}{Fore.LIGHTRED_EX}{level} {Fore.BLACK}  ➔ {Fore.RESET} {message}{timer}"
+            log_message = f"{self.prefix}{Fore.LIGHTRED_EX}{level} {Fore.BLACK}   ➔ {Fore.RESET} {message}{timer}"
             print(log_message)
             self._write_to_log(log_message)
 

@@ -1,22 +1,19 @@
 # LogMagix
+
 Beautiful & Simple Python Logger
 
-## Installation
-```bash
-git clone https://github.com/sexfance/logmagix
-cd logmagix
-pip install -e .
-```
+## 🚀 Quick Start
 
-## Usage
 ```python
 from logmagix import Logger, LogLevel
 
-# Initialize with GitHub repository
+# Choose your logging style (1 = ColorLogger, 2 = SimpleLogger)
 log = Logger(
+    style=1,  # Default colorful style
     prefix="MyApp",
-    github_repository="https://github.com/sexfance/logmagix",
-    level=LogLevel.DEBUG
+    github_repository="https://github.com/sexfrance/logmagix",
+    level=LogLevel.DEBUG,
+    log_file="logs/app.log"  # Optional log file
 )
 
 # Basic logging
@@ -108,6 +105,40 @@ log = Logger(level=LogLevel.WARNING)
 
 With this setting, only `WARNING`, `SUCCESS`, `FAILURE`, and `CRITICAL` messages will display.
 
+## 🎨 Logging Styles
+
+LogMagix offers two distinct logging styles:
+
+### Style 1: ColorLogger (Default)
+
+```python
+log = Logger(style=1)  # or just Logger()
+```
+
+Features colorful, detailed output with customizable prefixes and ANSI color formatting.
+
+### Style 2: SimpleLogger
+
+```python
+log = Logger(style=2)
+```
+
+Provides a minimalist, clean output format with basic color coding.
+
+### Style Comparison
+
+```python
+# Style 1 (ColorLogger)
+log1 = Logger(prefix="ColorLogger")
+log1.success("Operation successful!")
+# Output: [ColorLogger] [12:34:56] [Success] -> Operation successful!
+
+# Style 2 (SimpleLogger)
+log2 = Logger(style=2, prefix="SimpleLogger")
+log2.success("Operation successful!")
+# Output: 12:34:56 » SUCCESS ➔ Operation successful!
+```
+
 ### Log File Saving
 
 You can specify a log file path to save logs to a file for further review or debugging. The logger will automatically strip ANSI color codes from messages saved to the log file for readability. Log files are appended with each new logging session.
@@ -119,30 +150,35 @@ log.success("This message will also be saved to app.log")
 
 To view logs saved to the file, open the specified path and review the recorded entries, which include timestamped log messages for tracking system state over time.
 
-### Loading Animation
+## 🔄 Loading Animation
 
-The `Loader` class can be used in two ways:
-
-#### Using a context manager:
+The Loader class now supports custom prefixes and can be used in two ways:
 
 ```python
-from time import sleep
+from logmagix import Loader
+import time
 
-with Loader(desc="Loading with context manager..."):
-    for i in range(10):
-        sleep(0.25)
-```
+# Method 1: Context Manager
+with Loader(
+    prefix="MyApp",
+    desc="Processing...",
+    end="Completed!",
+    timeout=0.1
+):
+    time.sleep(2)  # Your task here
 
-#### Using `start()` and `stop()` methods:
-
-```python
-loader = Loader(desc="Loading with object...", end="That was fast!", timeout=0.05).start()
-for i in range(10):
-    sleep(0.25)
+# Method 2: Manual Control
+loader = Loader(
+    prefix="MyApp",
+    desc="Loading...",
+    end="Done!",
+    timeout=0.05
+).start()
+time.sleep(2)  # Your task here
 loader.stop()
 ```
 
-### Custom Log and Loader Prefix
+## Custom Log and Loader Prefix
 
 Both the `Logger` and `Loader` classes allow for customizing the prefix shown before each message:
 
@@ -188,21 +224,46 @@ This will display the ASCII art version of "LogMagix" in the center of the termi
 Here’s an example showing both logging, loader, and the new `Home` class functionality:
 
 ```python
-from logmagix import Logger, Loader, Home
+from logmagix import Logger, Home, Loader, LogLevel
 import time
 import uuid
 
-log = Logger(prefix="custom/log/prefix")
+# Test ColorLogger (Style 1 - Default)
+log1 = Logger(
+    prefix="ColorLogger",
+    github_repository="https://github.com/sexfrance/LogMagix",
+    level=LogLevel.DEBUG,
+    log_file="logs/color.log"
+)
+
 start_time = time.time()
+log1.success("We are running style 1!")
+log1.warning("Watch out, something might happen!")
+log1.failure("Critical error occurred!")
+log1.info("System is working properly")
+log1.debug(f"The system uuid is {uuid.getnode()}")
+log1.message("Dad", f"How are you? I'm gonna come soon!", start=start_time, end=time.time())
+log1.question("How old are you? ")
 
-# Log messages
-log.success("Everything is running smoothly!")
-log.warning("Watch out, something might happen!")
-log.failure("Critical error occurred!")
-log.info("System is working properly")
-log.debug(f"The system uuid is {uuid.getnode()}")
+# Test SimpleLogger (Style 2)
+log2 = Logger(
+    style=2,
+    prefix="SimpleLogger",
+    level=LogLevel.INFO,
+    log_file="logs/simple.log"
+)
 
-# Use loader with custom prefix and context manager
+start_time = time.time()
+log2.success("We are running style 2 !")
+log2.info("System is working properly")
+log2.error("Critical error occurred!")
+log2.warning("Watch out, something might happen!")
+log2.message("System is working properly")
+log2.debug(f"The system uuid is {uuid.getnode()}")
+log2.question("How old are you? ")
+
+# Test loader with custom prefix and context manager
+print("\nTesting Loader:")
 with Loader(prefix="custom/loader/prefix", desc="Processing data..."):
     time.sleep(2)  # Simulate task
 
@@ -211,17 +272,20 @@ loader = Loader(prefix="custom/loader/prefix", desc="Saving files...", end="Done
 time.sleep(2)  # Simulate task
 loader.stop()
 
+
+# Display home screen
 home_screen = Home(
     text="LogMagix",
     align="center",
-    adinfo1="discord.cyberious.xyz",
-    adinfo2="v1.0",
-    credits="Developed by sexfrance"
+    adinfo1="Test Suite",
+    adinfo2="v1.0.0",
+    credits="Testing Framework",
+    clear=True
 )
-
 home_screen.display()
 
-log.success("Processing completed!")
+# Test critical error (commented out as it exits the program)
+log1.critical("Critical error occurred!")
 ```
 
 ### Customization in `Home` Class
@@ -230,6 +294,10 @@ log.success("Processing completed!")
 - **align**: Align the ASCII art text to "left", "center", or "right" in the terminal.
 - **adinfo1** and **adinfo2**: Additional information displayed below the ASCII art.
 - **credits**: Optional credits or user information.
+
+### 📹 Preview
+
+![Preview](https://i.imgur.com/fsgZuv1.png)
 
 ## ❗ Requirements
 
@@ -263,4 +331,3 @@ LogMagix is developed and maintained by **sexfrance**.
   <img alt="PyPI - Downloads" src="https://img.shields.io/pypi/dm/logmagix?style=for-the-badge&labelColor=black&color=f429ff&logo=IOTA">
 
 </p>
-
