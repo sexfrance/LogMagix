@@ -2,25 +2,43 @@ from logmagix import Logger, Home, Loader, LogLevel
 import time
 import uuid
 
-log = Logger(
-    prefix="LogMagix",
+# Test ColorLogger (Style 1 - Default)
+log1 = Logger(
+    prefix="ColorLogger",
     github_repository="https://github.com/sexfrance/LogMagix",
     level=LogLevel.DEBUG,
-    log_file="logs/app.log"
+    log_file="logs/color.log"
 )
+print("\nTesting ColorLogger (Style 1):")
 start_time = time.time()
+log1.success("Everything is running smoothly!")
+log1.warning("Watch out, something might happen!")
+log1.failure("Critical error occurred!")
+log1.info("System is working properly")
+log1.debug(f"The system uuid is {uuid.getnode()}")
+log1.message("Dad", f"How are you? I'm gonna come soon!", start=start_time, end=time.time())
+log1.question("How old are you? ")
 
-# Log messages
-log.success("Everything is running smoothly!")
-log.warning("Watch out, something might happen!")
-log.failure("Critical error occurred!")
-log.info("System is working properly")
-log.debug(f"The system uuid is {uuid.getnode()}")
-log.message("Dad", f"How are you? I'm gonna come soon!", start=start_time, end=time.time())
-log.question("How old are you? ")
+# Test SimpleLogger (Style 2)
+log2 = Logger(
+    style=2,
+    prefix="SimpleLogger",
+    github_repository="https://github.com/sexfrance/LogMagix",
+    level=LogLevel.DEBUG,
+    log_file="logs/simple.log"
+)
+print("\nTesting SimpleLogger (Style 2):")
+start_time = time.time()
+log2.success("Everything is running smoothly!")
+log2.info("System is working properly")
+log2.error("Critical error occurred!")
+log2.warning("Watch out, something might happen!")
+log2.message("System is working properly")
+log2.debug(f"The system uuid is {uuid.getnode()}")
+log2.question("How old are you? ")
 
-
-# Use loader with custom prefix and context manager
+# Test loader with custom prefix and context manager
+print("\nTesting Loader:")
 with Loader(prefix="custom/loader/prefix", desc="Processing data..."):
     time.sleep(2)  # Simulate task
 
@@ -29,9 +47,8 @@ loader = Loader(prefix="custom/loader/prefix", desc="Saving files...", end="Done
 time.sleep(2)  # Simulate task
 loader.stop()
 
-log.critical("Critical error occurred!")
 
-
+# Display home screen
 home_screen = Home(
     text="LogMagix",
     align="center",
@@ -40,3 +57,7 @@ home_screen = Home(
     credits="Testing Framework",
     clear=True
 )
+home_screen.display()
+
+# Test critical error (commented out as it exits the program)
+log1.critical("Critical error occurred!")

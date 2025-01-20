@@ -18,22 +18,12 @@ class LogLevel(Enum):
     FAILURE = 5
     CRITICAL = 6
 
-class Logger:
+class BaseLogger:
     def __init__(self, prefix: str | None = "discord.cyberious.xyz", github_repository: str = None, level: LogLevel = LogLevel.DEBUG, log_file: str | None = None):
-        self.WHITE = "\u001b[37m"
-        self.MAGENTA = "\033[38;5;97m"
-        self.BRIGHT_MAGENTA = "\033[38;2;157;38;255m"
-        self.LIGHT_CORAL = "\033[38;5;210m"
-        self.RED = "\033[38;5;196m"
-        self.GREEN = "\033[38;5;40m"
-        self.YELLOW = "\033[38;5;220m"
-        self.BLUE = "\033[38;5;21m"
-        self.PINK = "\033[38;5;176m"
-        self.CYAN = "\033[96m"
-        self.prefix = f"{self.PINK}[{self.MAGENTA}{prefix}{self.PINK}] " if prefix else f"{self.PINK}"
         self.level = level
         self.repo_url = github_repository
         self.log_file = log_file
+        self.prefix = prefix
 
         if log_file:
             os.makedirs(os.path.dirname(log_file), exist_ok=True)
@@ -42,9 +32,9 @@ class Logger:
         if self.repo_url:
             username = self._extract_github_username(self.repo_url)
             if username:
-                log.info(f"Developed by {username} - {self.repo_url}")
+                self.info(f"Developed by {username} - {self.repo_url}")
             else:
-                log.info(f"GitHub Repository: {self.repo_url}")
+                self.info(f"GitHub Repository: {self.repo_url}")
 
     def _extract_github_username(self, url: str) -> str | None:
         url = url.replace('https://', '').replace('http://', '').replace('www.', '')
@@ -68,19 +58,33 @@ class Logger:
                 print(f"Error writing to log file: {e}")
 
     def _strip_ansi(self, text: str) -> str:
-        """Remove ANSI escape sequences from text"""
         ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
         return ansi_escape.sub('', text)
 
     def get_time(self) -> str:
         return datetime.datetime.now().strftime("%H:%M:%S")
 
+    def _should_log(self, message_level: LogLevel) -> bool:
+        return message_level.value >= self.level.value
+
+class ColorLogger(BaseLogger):
+    def __init__(self, *args, **kwargs):
+        self.WHITE = "\u001b[37m"
+        self.MAGENTA = "\033[38;5;97m"
+        self.BRIGHT_MAGENTA = "\033[38;2;157;38;255m"
+        self.LIGHT_CORAL = "\033[38;5;210m"
+        self.RED = "\033[38;5;196m"
+        self.GREEN = "\033[38;5;40m"
+        self.YELLOW = "\033[38;5;220m"
+        self.BLUE = "\033[38;5;21m"
+        self.PINK = "\033[38;5;176m"
+        self.CYAN = "\033[96m"
+        super().__init__(*args, **kwargs)
+        self.prefix = f"{self.PINK}[{self.MAGENTA}{self.prefix}{self.PINK}] " if self.prefix else f"{self.PINK}"
+
     def message3(self, level: str, message: str, start: int = None, end: int = None) -> str:
         current_time = self.get_time()
         return f"{self.prefix}[{self.BRIGHT_MAGENTA}{current_time}{self.PINK}] {self.PINK}[{self.CYAN}{level}{self.PINK}] -> {self.CYAN}{message}{Fore.RESET}"
-
-    def _should_log(self, message_level: LogLevel) -> bool:
-        return message_level.value >= self.level.value
 
     def success(self, message: str, start: int = None, end: int = None, level: str = "Success") -> None:
         if self._should_log(LogLevel.SUCCESS):
@@ -154,6 +158,66 @@ class Logger:
             log_message = f"{self.prefix}[{self.BRIGHT_MAGENTA}{self.get_time()}{self.PINK}]{Fore.RESET} {self.PINK}[{Fore.YELLOW}DEBUG{self.PINK}] -> {Fore.RESET} {self.GREEN}{message}{Fore.RESET}" + timer
             print(log_message)
             self._write_to_log(log_message)
+
+class SimpleLogger(BaseLogger):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.prefix = f"{Fore.BLACK}{self.get_time()} » {Fore.RESET}"
+
+    def success(self, message: str, start: int = None, end: int = None, level: str = "SUCCESS") -> None:
+        if self._should_log(LogLevel.SUCCESS):
+            timer = f" (In {str(end - start)[:5]}s)" if start and end else ""
+            log_message = f"{self.prefix}{Fore.LIGHTGREEN_EX}{level} {Fore.BLACK}➔ {Fore.RESET} {message}{timer}"
+            print(log_message)
+            self._write_to_log(log_message)
+
+    def error(self, message: str, start: int = None, end: int = None, level: str = "ERROR") -> None:
+        if self._should_log(LogLevel.FAILURE):
+            timer = f" (In {str(end - start)[:5]}s)" if start and end else ""
+            log_message = f"{self.prefix}{Fore.LIGHTRED_EX}{level} {Fore.BLACK}  ➔ {Fore.RESET} {message}{timer}"
+            print(log_message)
+            self._write_to_log(log_message)
+
+    def warning(self, message: str, start: int = None, end: int = None, level: str = "WARNING") -> None:
+        if self._should_log(LogLevel.WARNING):
+            timer = f" (In {str(end - start)[:5]}s)" if start and end else ""
+            log_message = f"{self.prefix}{Fore.LIGHTYELLOW_EX}{level} {Fore.BLACK}➔ {Fore.RESET} {message}{timer}"
+            print(log_message)
+            self._write_to_log(log_message)
+    
+    def message(self, message: str, start: int = None, end: int = None, level: str = "MESSAGE") -> None:
+        if self._should_log(LogLevel.WARNING):
+            timer = f" (In {str(end - start)[:5]}s)" if start and end else ""
+            log_message = f"{self.prefix}{Fore.LIGHTMAGENTA_EX}{level} {Fore.BLACK}➔ {Fore.RESET} {message}{timer}"
+            print(log_message)
+            self._write_to_log(log_message)
+
+    def info(self, message: str, start: int = None, end: int = None, level: str = "INFO") -> None:
+        if self._should_log(LogLevel.INFO):
+            timer = f" (In {str(end - start)[:5]}s)" if start and end else ""
+            log_message = f"{self.prefix}{Fore.LIGHTBLUE_EX}{level} {Fore.BLACK}   ➔ {Fore.RESET} {message}{timer}"
+            print(log_message)
+            self._write_to_log(log_message)
+
+    def debug(self, message: str, start: int = None, end: int = None) -> None:
+        if self._should_log(LogLevel.DEBUG):
+            timer = f" (In {str(end - start)[:5]}s)" if start and end else ""
+            log_message = f"{self.prefix}{Fore.GREEN}[{Fore.YELLOW}DEBUG{Fore.GREEN}] {Fore.BLACK}➔ {Fore.RESET} {message}{timer}"
+            print(log_message)
+            self._write_to_log(log_message)
+
+    def question(self, message: str, level: str = "QUESTION") -> None:
+        question_message = f"{self.prefix}{Fore.LIGHTCYAN_EX}{level} {Fore.BLACK}➔ {Fore.RESET} {message}"
+        print(question_message, end='')
+        i = input()
+        self._write_to_log(f"{question_message}")
+        self._write_to_log(f"User Answer: {i}")
+        return i
+
+def Logger(style: int = 1, *args, **kwargs):
+    if style == 2:
+        return SimpleLogger(*args, **kwargs)
+    return ColorLogger(*args, **kwargs)
 
 log = Logger()
 
