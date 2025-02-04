@@ -181,7 +181,7 @@ class SimpleLogger(BaseLogger):
     def error(self, message: str, start: int = None, end: int = None, level: str = "ERROR") -> None:
         if self._should_log(LogLevel.FAILURE):
             timer = f" (In {str(end - start)[:5]}s)" if start and end else ""
-            log_message = f"{self.prefix}{Fore.LIGHTRED_EX}{level} {Fore.BLACK}   ➔ {Fore.RESET} {message}{timer}"
+            log_message = f"{self.prefix}{Fore.LIGHTRED_EX}{level} {Fore.BLACK}  ➔ {Fore.RESET} {message}{timer}"
             print(log_message)
             self._write_to_log(log_message)
 
