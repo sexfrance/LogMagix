@@ -18,7 +18,7 @@ class LogLevel(Enum):
     FAILURE = 5
     CRITICAL = 6
 
-class BaseLogger:
+class Logger:
     def __init__(self, prefix: str | None = "discord.cyberious.xyz", github_repository: str = None, level: LogLevel = LogLevel.DEBUG, log_file: str | None = None):
         self.level = level
         self.repo_url = github_repository
@@ -60,7 +60,7 @@ class BaseLogger:
     def _should_log(self, message_level: LogLevel) -> bool:
         return message_level.value >= self.level.value
 
-class ColorLogger(BaseLogger):
+class ColorLogger(Logger):
     def __init__(self, *args, **kwargs):
         self.WHITE = "\u001b[37m"
         self.MAGENTA = "\033[38;5;97m"
@@ -159,7 +159,7 @@ class ColorLogger(BaseLogger):
             print(log_message)
             self._write_to_log(log_message)
 
-class SimpleLogger(BaseLogger):
+class SimpleLogger(Logger):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.prefix = f"{Fore.BLACK}{self.get_time()} » {Fore.RESET}"
@@ -175,6 +175,13 @@ class SimpleLogger(BaseLogger):
         if self._should_log(LogLevel.SUCCESS):
             timer = f" (In {str(end - start)[:5]}s)" if start and end else ""
             log_message = f"{self.prefix}{Fore.LIGHTGREEN_EX}{level} {Fore.BLACK}➔ {Fore.RESET} {message}{timer}"
+            print(log_message)
+            self._write_to_log(log_message)
+
+    def failure(self, message: str, start: int = None, end: int = None, level: str = "FAILURE") -> None:
+        if self._should_log(LogLevel.FAILURE):
+            timer = f" (In {str(end - start)[:5]}s)" if start and end else ""
+            log_message = f"{self.prefix}{Fore.LIGHTRED_EX}{level} {Fore.BLACK}  ➔ {Fore.RESET} {message}{timer}"
             print(log_message)
             self._write_to_log(log_message)
 
