@@ -19,6 +19,13 @@ class LogLevel(Enum):
     CRITICAL = 6
 
 class Logger:
+    def __new__(cls, style: int = 1, *args, **kwargs):
+        if cls is Logger:
+            if style == 2:
+                return SimpleLogger(*args, **kwargs)
+            return ColorLogger(*args, **kwargs)
+        return super().__new__(cls)
+        
     def __init__(self, prefix: str | None = "discord.cyberious.xyz", github_repository: str = None, level: LogLevel = LogLevel.DEBUG, log_file: str | None = None):
         self.level = level
         self.repo_url = github_repository
@@ -227,11 +234,6 @@ class SimpleLogger(Logger):
         self._write_to_log(f"{question_message}")
         self._write_to_log(f"User Answer: {i}")
         return i
-
-def Logger(style: int = 1, *args, **kwargs):
-    if style == 2:
-        return SimpleLogger(*args, **kwargs)
-    return ColorLogger(*args, **kwargs)
 
 log = Logger()
 
