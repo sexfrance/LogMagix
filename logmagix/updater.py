@@ -1,4 +1,3 @@
-import pkg_resources
 import requests
 import subprocess
 import sys

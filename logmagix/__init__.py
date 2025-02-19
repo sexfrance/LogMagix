@@ -1,6 +1,5 @@
 # logmagix/__init__.py
 
-from ..version import __version__
 from .logger import Logger, Loader, Home, LogLevel
 from .updater import AutoUpdater
 
