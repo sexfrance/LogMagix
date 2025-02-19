@@ -26,7 +26,7 @@ class Logger:
             return ColorLogger(*args, **kwargs)
         return super().__new__(cls)
         
-    def __init__(self, prefix: str | None = "discord.cyberious.xyz", github_repository: str = None, level: LogLevel = LogLevel.DEBUG, log_file: str | None = None):
+    def __init__(self, prefix: str | None = "discord.cyberious.xyz", github_repository: str = None, level: LogLevel = LogLevel.DEBUG, log_file: str | None = None, auto_update: bool = True):
         self.level = level
         self.repo_url = github_repository
         self.log_file = log_file
@@ -35,6 +35,11 @@ class Logger:
         if log_file:
             os.makedirs(os.path.dirname(log_file), exist_ok=True)
             self._write_to_log(f"=== Logging started at {datetime.datetime.now()} ===\n")
+
+        if auto_update:
+            from .updater import AutoUpdater
+            updater = AutoUpdater("logmagix", self)
+            updater.check_for_updates(auto_update=True)
 
     def _extract_github_username(self, url: str) -> str | None:
         url = url.replace('https://', '').replace('http://', '').replace('www.', '')
@@ -272,7 +277,7 @@ class Loader:
 
     def stop(self):
         self.done = True
-        if self.end != "\r":
+        if (self.end != "\r"):
             current_time = datetime.datetime.now().strftime("%H:%M:%S")  # Get current time for stop message
             end_message = f"\n{log.PINK}[{log.MAGENTA}{self.prefix}{log.PINK}] [{log.BRIGHT_MAGENTA}{current_time}{log.PINK}] {log.GREEN} {self.end} {Fore.RESET}"
             print(end_message, flush=True)
