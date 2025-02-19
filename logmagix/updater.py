@@ -3,7 +3,7 @@ import subprocess
 import sys
 from packaging import version
 from .logger import Logger
-from version import __version__
+from .version import __version__
 
 class AutoUpdater:
     _instance = None
