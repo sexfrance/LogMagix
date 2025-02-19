@@ -1,5 +1,5 @@
 from setuptools import setup, find_packages
-from logmagix.version import __version__
+from version import __version__
 
 setup(
     name="logmagix",                   
