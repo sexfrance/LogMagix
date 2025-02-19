@@ -70,7 +70,6 @@ class AutoUpdater:
         if self.update_available():
             if auto_update:
                 self.update()
-        else:
-            self.logger.info(f"You are running the latest version ({self.current_version})")
+    
         
         self._update_checked = True
