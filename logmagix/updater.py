@@ -27,7 +27,7 @@ class AutoUpdater:
             AutoUpdater._initialized = True
 
     def _get_installed_version(self) -> str:
-        return __version__  # Use version from __init__.py instead of pkg_resources
+        return __version__
 
     def get_pypi_version(self) -> str:
         try:
@@ -68,7 +68,6 @@ class AutoUpdater:
             return
 
         if self.update_available():
-            self.logger.info(f"Update available: {self.current_version} → {self.pypi_version}")
             if auto_update:
                 self.update()
         else:
