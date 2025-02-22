@@ -26,7 +26,7 @@ class Logger:
             return ColorLogger(*args, **kwargs)
         return super().__new__(cls)
         
-    def __init__(self, prefix: str | None = "discord.cyberious.xyz", github_repository: str = None, level: LogLevel = LogLevel.DEBUG, log_file: str | None = None, auto_update: bool = True):
+    def __init__(self, style: int = 1, prefix: str | None = "discord.cyberious.xyz", github_repository: str = None, level: LogLevel = LogLevel.DEBUG, log_file: str | None = None, auto_update: bool = True):
         self.level = level
         self.repo_url = github_repository
         self.log_file = log_file

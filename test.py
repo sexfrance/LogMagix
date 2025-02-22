@@ -45,7 +45,6 @@ loader = Loader(prefix="custom/loader/prefix", desc="Saving files...", end="Done
 time.sleep(2)  # Simulate task
 loader.stop()
 
-
 # Display home screen
 home_screen = Home(
     text="LogMagix",
