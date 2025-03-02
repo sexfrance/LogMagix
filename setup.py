@@ -5,7 +5,7 @@ setup(
     name="logmagix",
     version=__version__,
     packages=find_packages(),
-    install_requires=["colorama", "pystyle"],
+    install_requires=["colorama", "pystyle", "packaging"],
     author="Sexfrance",
     author_email="bwuuuuu@gmail.com",
     description="A custom logger package",
