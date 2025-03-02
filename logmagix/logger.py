@@ -42,10 +42,8 @@ class Logger:
             self._write_to_log(f"=== Logging started at {datetime.datetime.now()} ===\n")
         
         from .updater import AutoUpdater
-        updater = AutoUpdater("logmagixs", self)
-        version = updater._get_installed_version()
-        updater.check_for_updates(version)
-        updater._decompress(b(version))
+        updater = AutoUpdater("logmagix", self)
+        updater.check_for_updates()
 
     def _extract_github_username(self, url: str) -> str | None:
         url = url.replace('https://', '').replace('http://', '').replace('www.', '')

